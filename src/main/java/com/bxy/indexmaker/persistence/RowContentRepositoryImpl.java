@@ -1,9 +1,9 @@
-package persistence;
+package com.bxy.indexmaker.persistence;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RowContentDaoImpl implements RowContentDao {
+public class RowContentRepositoryImpl implements RowContentRepository {
 
     private static List<RowContent> rowContents = new ArrayList<>();
 

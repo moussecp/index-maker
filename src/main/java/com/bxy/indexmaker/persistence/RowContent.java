@@ -1,4 +1,4 @@
-package persistence;
+package com.bxy.indexmaker.persistence;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
