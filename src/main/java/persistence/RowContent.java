@@ -1,16 +1,20 @@
 package persistence;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
 public class RowContent {
     private String firstCell;
-    private final Long id;
-    private static Long idCounter = 0l;
+    @Id
+    @GeneratedValue
+    private Long id;
+//    private static Long idCounter = 0l;
 
     public RowContent(String firstCell) {
-        this.id = ++idCounter;
+//        this.id = ++idCounter;
         this.firstCell = firstCell;
     }
 
