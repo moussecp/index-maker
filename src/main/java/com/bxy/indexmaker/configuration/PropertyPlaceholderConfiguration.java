@@ -15,17 +15,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 public class PropertyPlaceholderConfiguration {
 
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-    @Bean
-    public XlsFileAddress getXlsFileAddress() {
-        return XlsFileAddress.builder()
-                .setXlsFilePath("${excel.file.path.windows}")
-                .setXlsFileName("${excel.file.name.test}")
-                .build();
-    }
-
 
 }

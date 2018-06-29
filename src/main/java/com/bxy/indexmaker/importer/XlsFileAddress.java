@@ -1,6 +1,4 @@
-package com.bxy.indexmaker.configuration;
-
-import org.springframework.beans.factory.annotation.Value;
+package com.bxy.indexmaker.importer;
 
 public class XlsFileAddress {
     private String xlsFilePath;
@@ -27,7 +25,7 @@ public class XlsFileAddress {
         return xlsFilePath.concat(xlsFileName);
     }
 
-    static class Builder {
+    public static class Builder {
         private String xlsFilePath;
         private String xlsFileName;
 

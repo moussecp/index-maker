@@ -1,6 +1,5 @@
 package com.bxy.indexmaker.importer;
 
-import com.bxy.indexmaker.configuration.XlsFileAddress;
 import com.bxy.indexmaker.persistence.RowContent;
 import com.bxy.indexmaker.persistence.RowContentRepository;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -16,14 +15,15 @@ import java.io.IOException;
 @Service
 public class ExcelImporter {
 
-    private RowContentRepository rowContentRepository;
-    private XlsFileAddress xlsFileAddress;
-
     @Autowired
-    public ExcelImporter(RowContentRepository rowContentRepository, XlsFileAddress xlsFileAddress) {
-        this.rowContentRepository = rowContentRepository;
-        this.xlsFileAddress = xlsFileAddress;
-    }
+    private RowContentRepository rowContentRepository;
+    private XlsFileAddress xlsFileAddress =XlsFileAddress.builder()
+            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
+            .setXlsFileName("test.xls")
+            .build();
+
+
+    public ExcelImporter() {}
 
     public void importExcelFile() throws IOException, InvalidFormatException {
         Workbook workbook = WorkbookFactory.create(new FileInputStream(xlsFileAddress.get()));
@@ -37,5 +37,11 @@ public class ExcelImporter {
         }
     }
 
+    public void setRowContentRepository(RowContentRepository rowContentRepository) {
+        this.rowContentRepository = rowContentRepository;
+    }
 
+    public void setXlsFileAddress(XlsFileAddress xlsFileAddress) {
+        this.xlsFileAddress = xlsFileAddress;
+    }
 }

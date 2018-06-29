@@ -1,8 +1,11 @@
 package com.bxy.indexmaker.persistence;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class RowContentRepositoryImpl implements RowContentRepository {
 
     private static List<RowContent> rowContents = new ArrayList<>();

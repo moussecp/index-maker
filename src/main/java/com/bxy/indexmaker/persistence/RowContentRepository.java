@@ -4,7 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+
 public interface RowContentRepository {
     void addRowContent(RowContent rowContent);
     List<RowContent> findAllRowContents();

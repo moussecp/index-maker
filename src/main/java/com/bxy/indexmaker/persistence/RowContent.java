@@ -1,25 +1,31 @@
 package com.bxy.indexmaker.persistence;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "ROW_CONTENT")
 public class RowContent {
-    private String firstCell;
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-//    private static Long idCounter = 0l;
+
+    @Column(name = "FIRST_CELL")
+    private String firstCell;
+
+    public RowContent() {
+    }
 
     public RowContent(String firstCell) {
-//        this.id = ++idCounter;
         this.firstCell = firstCell;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstCell() {
