@@ -17,6 +17,7 @@ public class ExcelListController {
 
     public static final String EXCEL_LIST = "excel/list";
     public static final String EXCEL_IMPORT = "excel/add";
+    public static final String EXCEL_CALCULATE = "excel/calculateIndex";
     @Autowired
     private RowContentService rowContentService;
 
@@ -33,8 +34,14 @@ public class ExcelListController {
     }
 
     @RequestMapping("/" + EXCEL_IMPORT)
-    String importList(Model model) throws IOException, InvalidFormatException {
+    String importList() throws IOException, InvalidFormatException {
         rowContentService.loadExcelFileContent();
-        return EXCEL_LIST;
+        return "redirect:/excel/list";
+    }
+
+    @RequestMapping("/" + EXCEL_CALCULATE)
+    String calculateIndex(Model model) throws IOException, InvalidFormatException {
+        rowContentService.calculateIndex();
+        return "/excel/calculateIndex";
     }
 }

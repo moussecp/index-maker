@@ -17,7 +17,7 @@
 <div id="container" class="container">
 
     <h1>
-        Load Excel file:
+        Index calculated:
     </h1>
 
     <p>

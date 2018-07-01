@@ -1,12 +1,8 @@
 package com.bxy.indexmaker.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.springframework.util.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 
 import javax.persistence.*;
-import java.util.Objects;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 @Entity
 @Table(name = "ROW_CONTENT")
@@ -16,15 +12,27 @@ public class RowContent implements Identifiable<Long> {
     @SequenceGenerator(name = "ROWCONTENT_SEQ_GEN", sequenceName = "ROWCONTENT_SEQ", allocationSize = 1)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String firstCell;
+    @Column
+    private String secondCell;
+    @Column
+    private String thirdCell;
+    @Column
+    private String fourthCell;
 
     public RowContent() {
     }
 
-    public RowContent(String firstCell) {
-        checkArgument(!StringUtils.isEmpty(firstCell), "firstCell must not be null or empty");
-        this.firstCell = firstCell;
+    protected RowContent(String firstCell, String secondCell, String thirdCell, String fourthCell) {
+        this.firstCell = setValueOrEmpty(firstCell);
+        this.secondCell = setValueOrEmpty(secondCell);
+        this.thirdCell = setValueOrEmpty(thirdCell);
+        this.fourthCell = setValueOrEmpty(fourthCell);
+    }
+
+    private String setValueOrEmpty(String value) {
+        return value != null ? value : Strings.EMPTY;
     }
 
     @Override
@@ -32,7 +40,7 @@ public class RowContent implements Identifiable<Long> {
         return id;
     }
 
-    public void setId(Long id) {
+    void setId(Long id) {
         this.id = id;
     }
 
@@ -40,30 +48,35 @@ public class RowContent implements Identifiable<Long> {
         return firstCell;
     }
 
-    public void setFirstCell(String firstCell) {
+    void setFirstCell(String firstCell) {
         this.firstCell = firstCell;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("firstCell", firstCell)
-                .toString();
+    public String getSecondCell() {
+        return secondCell;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RowContent that = (RowContent) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(firstCell, that.firstCell);
+    void setSecondCell(String secondCell) {
+        this.secondCell = secondCell;
     }
 
-    @Override
-    public int hashCode() {
+    public String getThirdCell() {
+        return thirdCell;
+    }
 
-        return Objects.hash(id, firstCell);
+    void setThirdCell(String thirdCell) {
+        this.thirdCell = thirdCell;
+    }
+
+    public String getFourthCell() {
+        return fourthCell;
+    }
+
+    void setFourthCell(String fourthCell) {
+        this.fourthCell = fourthCell;
+    }
+
+    public boolean hasAllFieldsEmpty() {
+        return firstCell.isEmpty() && secondCell.isEmpty() && thirdCell.isEmpty() && fourthCell.isEmpty();
     }
 }

@@ -1,7 +1,7 @@
 package com.bxy.indexmaker.service.importer;
 
 import com.bxy.indexmaker.configuration.PropertyPlaceholderConfiguration;
-import com.bxy.indexmaker.domain.RowContentRepository;
+import com.bxy.indexmaker.service.RowContentService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 public class ExcelImporterTest {
 
     @Mock
-    private RowContentRepository rowContentRepository;
+    private RowContentService rowContentService;
     private ExcelImporter excelImporter;
     private XlsFileAddress xlsFileAddress =XlsFileAddress.builder()
 //            .setXlsFilePath("/home/tms/workspace/indexmaker/src/test/resources/")
@@ -33,13 +33,13 @@ public class ExcelImporterTest {
     @Before
     public void setup() {
         excelImporter = new ExcelImporter();
-        excelImporter.setRowContentRepository(rowContentRepository);
+        excelImporter.setRowContentService(rowContentService);
         excelImporter.setXlsFileAddress(xlsFileAddress);
     }
 
     @Test
     public void importExcelFile() throws IOException, InvalidFormatException {
         excelImporter.importExcelFile();
-        verify(rowContentRepository, times(3)).addRowContent(any());
+        verify(rowContentService, times(3)).addRowContent(any());
     }
 }
