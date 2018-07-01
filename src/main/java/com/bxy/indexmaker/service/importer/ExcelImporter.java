@@ -1,7 +1,7 @@
-package com.bxy.indexmaker.importer;
+package com.bxy.indexmaker.service.importer;
 
-import com.bxy.indexmaker.persistence.RowContent;
-import com.bxy.indexmaker.persistence.RowContentRepository;
+import com.bxy.indexmaker.domain.RowContent;
+import com.bxy.indexmaker.domain.RowContentRepository;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -17,8 +17,10 @@ public class ExcelImporter {
 
     @Autowired
     private RowContentRepository rowContentRepository;
-    private XlsFileAddress xlsFileAddress =XlsFileAddress.builder()
-            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
+    //TODO use properties file
+    private XlsFileAddress xlsFileAddress = XlsFileAddress.builder()
+//            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
+            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\")
             .setXlsFileName("test.xls")
             .build();
 

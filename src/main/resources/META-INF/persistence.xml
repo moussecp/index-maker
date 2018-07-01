@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://java.sun.com/xml/ns/persistence"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+    <persistence-unit name="indexMakerDataStore" transaction-type="RESOURCE_LOCAL"> <!-- or transaction-type="JTA" -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <properties>
+            <property name="hibernate.connection.url" value="jdbc:h2:mem:example-app;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
+            <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+            <!--<property name="hibernate.default_schema" value="sa"/>-->
+            <property name="hibernate.connection.username" value="sa"/>
+            <property name="hibernate.connection.password" value=""/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <!--
+                * validate      : validate the schema, makes no changes to the database. <- should be used
+                * update        : update the schema.
+                * create        : creates the schema, destroying previous data.
+                * create-drop   : drop the schema at the end of the session.
+            -->
+        </properties>
+    </persistence-unit>
+</persistence>

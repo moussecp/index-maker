@@ -1,6 +1,5 @@
 package com.bxy.indexmaker.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
         ignoreResourceNotFound = true)
 public class PropertyPlaceholderConfiguration {
 
+    // TODO fix and use this
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();

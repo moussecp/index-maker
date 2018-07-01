@@ -1,11 +1,9 @@
-package com.bxy.indexmaker.persistence;
-
-import org.springframework.stereotype.Repository;
+package com.bxy.indexmaker.domain;
 
 import java.util.List;
 
 
-public interface RowContentRepository {
+public interface RowContentRepository extends Dao<Long, RowContent> {
     void addRowContent(RowContent rowContent);
     List<RowContent> findAllRowContents();
     RowContent findRowContent(Long id);

@@ -1,4 +1,4 @@
-package com.bxy.indexmaker.importer;
+package com.bxy.indexmaker.service.importer;
 
 public class XlsFileAddress {
     private String xlsFilePath;

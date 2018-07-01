@@ -1,4 +1,4 @@
-package com.bxy.indexmaker.web;
+package com.bxy.indexmaker.app;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
