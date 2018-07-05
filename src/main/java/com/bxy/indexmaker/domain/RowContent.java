@@ -3,6 +3,9 @@ package com.bxy.indexmaker.domain;
 import org.apache.logging.log4j.util.Strings;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "ROW_CONTENT")
@@ -78,5 +81,38 @@ public class RowContent implements Identifiable<Long> {
 
     public boolean hasAllFieldsEmpty() {
         return firstCell.isEmpty() && secondCell.isEmpty() && thirdCell.isEmpty() && fourthCell.isEmpty();
+    }
+
+    public List<String> getAllCellContents() {
+        return Arrays.asList(firstCell, secondCell, thirdCell, fourthCell);
+    }
+
+    @Override
+    public String toString() {
+        return "RowContent{" +
+                "id=" + id +
+                ", firstCell='" + firstCell + '\'' +
+                ", secondCell='" + secondCell + '\'' +
+                ", thirdCell='" + thirdCell + '\'' +
+                ", fourthCell='" + fourthCell + '\'' +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RowContent that = (RowContent) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getFirstCell(), that.getFirstCell()) &&
+                Objects.equals(getSecondCell(), that.getSecondCell()) &&
+                Objects.equals(getThirdCell(), that.getThirdCell()) &&
+                Objects.equals(getFourthCell(), that.getFourthCell());
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(getId(), getFirstCell(), getSecondCell(), getThirdCell(), getFourthCell());
     }
 }

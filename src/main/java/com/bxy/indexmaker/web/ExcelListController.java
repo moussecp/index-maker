@@ -29,7 +29,7 @@ public class ExcelListController {
 
     @RequestMapping("/" + EXCEL_LIST)
     String showList(Model model) {
-        model.addAttribute("firstCells", rowContentService.getFirstCells());
+        model.addAttribute("firstCells", rowContentService.getAllRowContents());
         return EXCEL_LIST;
     }
 
@@ -42,6 +42,7 @@ public class ExcelListController {
     @RequestMapping("/" + EXCEL_CALCULATE)
     String calculateIndex(Model model) throws IOException, InvalidFormatException {
         rowContentService.calculateIndex();
+        model.addAttribute("indexedReferences", rowContentService.getReferencesSortedByCount());
         return "/excel/calculateIndex";
     }
 }

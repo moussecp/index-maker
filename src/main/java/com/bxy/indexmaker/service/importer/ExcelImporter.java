@@ -17,8 +17,8 @@ public class ExcelImporter {
     private RowContentService rowContentService;
     //TODO use properties file
     private XlsFileAddress xlsFileAddress = XlsFileAddress.builder()
-//            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
-            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\")
+            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
+//            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\")
             .setXlsFileName("programme-ecolo.xls")
             .build();
 
@@ -37,16 +37,7 @@ public class ExcelImporter {
             for (int i = 0; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row != null) {
-                    Cell cell_0 = row.getCell(0);
-                    Cell cell_1 = row.getCell(1);
-                    Cell cell_2 = row.getCell(2);
-                    Cell cell_3 = row.getCell(3);
-                    RowContentFactory.Builder builder = RowContentFactory.builder();
-                    if (cell_0 != null) builder.setFirstCell(cell_0.toString());
-                    if (cell_1 != null) builder.setSecondCell(cell_1.toString());
-                    if (cell_2 != null) builder.setThirdCell(cell_2.toString());
-                    if (cell_3 != null) builder.setFourthCell(cell_3.toString());
-                    rowContentService.addRowContent(builder.build());
+                    rowContentService.extractRowContent(row);
                 }
             }
         }

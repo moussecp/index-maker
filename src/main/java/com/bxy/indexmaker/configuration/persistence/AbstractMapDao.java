@@ -2,6 +2,7 @@ package com.bxy.indexmaker.configuration.persistence;
 
 import com.bxy.indexmaker.domain.Dao;
 import com.bxy.indexmaker.domain.Identifiable;
+import com.bxy.indexmaker.domain.RowContent;
 import com.google.common.collect.ImmutableList;
 
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class AbstractMapDao<T extends Identifiable<Long>> implements Dao<Long, T> {
+public abstract class AbstractMapDao<T extends Identifiable<Long>> implements Dao<Long, T> {
     private static long lastGeneratedId = 0l;
     private Map<Long, T> entities = new HashMap<Long, T>();
 
@@ -46,4 +47,5 @@ public class AbstractMapDao<T extends Identifiable<Long>> implements Dao<Long, T
     protected Map<Long, T> getEntities() {
         return entities;
     }
+
 }

@@ -20,34 +20,19 @@
         Index calculated:
     </h1>
 
-    <p>
-        <spring:url value="/excel/add" var="addUrl"/>
-        <a href="${addUrl}" class="btn btn-success">
-            add
-        </a>
-
-        <spring:url value="/excel/calculateIndex" var="calculateIndexUrl"/>
-        <a href="${calculateIndexUrl}" class="btn btn-success">
-            calculate index
-        </a>
-    </p>
 
     <table class="table table-striped table-bordered table-hover">
         <tr>
-            <th>id</th>
-            <th>firstCell content</th>
-            <th>seecondCell content</th>
-            <th>thirdCell content</th>
-            <th>fourthCell content</th>
+            <th>word</th>
+            <th>count</th>
+            <th>rowContents</th>
         </tr>
 
-        <c:forEach items="${firstCells}" var="firstCell">
+        <c:forEach items="${indexedReferences}" var="indexedReference">
             <tr>
-                <td>${firstCell.id}</td>
-                <td>${firstCell.firstCell}</td>
-                <td>${firstCell.secondCell}</td>
-                <td>${firstCell.thirdCell}</td>
-                <td>${firstCell.fourthCell}</td>
+                <td>${indexedReference.word}</td>
+                <td>${indexedReference.count}</td>
+                <td>${indexedReference.getRowContentIds()}</td>
             </tr>
         </c:forEach>
     </table>
