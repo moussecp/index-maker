@@ -10,33 +10,48 @@ public class RowContentFactory {
     }
 
     public static final class Builder {
-        private String firstCell;
-        private String secondCell;
-        private String thirdCell;
-        private String fourthCell;
+        private String content;
+        private String chapter;
+        private String subChapter;
+        private String section;
+        private String subSection;
+        private String subSubSection;
+        private String notes;
 
         private Builder() {
         }
 
-        public Builder setFirstCell(String firstCell) {
-            this.firstCell = firstCell;
+        public Builder setContent(String content) {
+            this.content = content;
             return this;
         }
-        public Builder setSecondCell(String secondCell) {
-            this.secondCell = secondCell;
+        public Builder setChapter(String chapter) {
+            this.chapter = chapter;
             return this;
         }
-        public Builder setThirdCell(String thirdCell) {
-            this.thirdCell = thirdCell;
+        public Builder setSubChapter(String subChapter) {
+            this.subChapter = subChapter;
             return this;
         }
-        public Builder setFourthCell(String fourthCell) {
-            this.fourthCell = fourthCell;
+        public Builder setSection(String section) {
+            this.section = section;
+            return this;
+        }
+        public Builder setSubSection(String subSection) {
+            this.subSection = subSection;
+            return this;
+        }
+        public Builder setSubSubSection(String subSubSection) {
+            this.subSubSection = subSubSection;
+            return this;
+        }
+        public Builder setNotes(String notes) {
+            this.notes = notes;
             return this;
         }
 
         public RowContent build() {
-            return new RowContent(firstCell, secondCell, thirdCell, fourthCell);
+            return new RowContent(content, chapter, subChapter, section, subSection, subSubSection, notes);
         }
     }
 }

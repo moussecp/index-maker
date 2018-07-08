@@ -15,28 +15,32 @@ public class ReferenceMapDao extends AbstractMapDao<Reference> implements Refere
     private static Long index = 1L;
 
     @Override
-    public void createOrUpdateReference(String word, RowContent rowContent) {
+    public void createOrUpdateReference(String word, String subChapter, RowContent rowContent) {
         try {
-            updateReference(word, rowContent);
+            updateReference(word, subChapter, rowContent);
         } catch (NoSuchElementException e) {
-            createReference(Reference.builder()
-                    .setWord(word)
-                    .setRowContent(rowContent)
-                    .build());
+            if (word.trim().length() > 0) {
+                createReference(Reference.builder()
+                        .setWord(word)
+                        .setSubChapter(subChapter)
+                        .setRowContent(rowContent)
+                        .build());
+            }
         }
     }
 
     private void createReference(Reference reference) {
         reference.setId(index++);
-        System.out.println("added: " + reference);
+//        System.out.println("added: " + reference);
         references.add(reference);
     }
 
-    private void updateReference(String word, RowContent rowContent) {
+    private void updateReference(String word, String subChapter, RowContent rowContent) {
         Reference reference = findReferenceWithWord(word);
         if (reference != null) {
             reference.addRowContent(rowContent);
-            System.out.println("updated: " + reference);
+            reference.addOrUpdateSubChapters(subChapter);
+//            System.out.println("updated: " + reference);
         } else {
             throw new NoSuchElementException();
         }
@@ -47,7 +51,7 @@ public class ReferenceMapDao extends AbstractMapDao<Reference> implements Refere
         System.out.println("results: " + references);
         System.out.println(BlackListedWords.getList());
         return references.stream()
-                .filter(reference -> !BlackListedWords.getList().contains(reference.getWord()))
+                .filter(reference -> !BlackListedWords.getUpperCasedList().contains(reference.getWord().toUpperCase()))
                 .filter(reference -> reference.getCount() > REFERENCE_COUNT_THRESHOLD)
                 .collect(Collectors.toList());
     }
@@ -59,7 +63,7 @@ public class ReferenceMapDao extends AbstractMapDao<Reference> implements Refere
                 .filter(ref -> ref.getId().equals(id))
                 .findAny()
                 .get();
-        System.out.println("found for id: " + id + "results: " + reference);
+//        System.out.println("found for id: " + id + "results: " + reference);
         return reference;
     }
 
@@ -71,7 +75,7 @@ public class ReferenceMapDao extends AbstractMapDao<Reference> implements Refere
                 .findAny();
         if (optionalReference.isPresent()) {
             Reference reference = optionalReference.get();
-            System.out.println("found for word: " + word + "results: " + reference);
+//            System.out.println("found for word: " + word + "results: " + reference);
             return reference;
         }
         return null;

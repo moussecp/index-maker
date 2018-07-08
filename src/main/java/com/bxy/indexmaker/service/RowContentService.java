@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -41,25 +40,37 @@ public class RowContentService {
     }
 
     public void extractRowContent(Row row) {
-            Cell cell_0 = row.getCell(0);
-            Cell cell_1 = row.getCell(1);
-            Cell cell_2 = row.getCell(2);
-            Cell cell_3 = row.getCell(3);
-            RowContentFactory.Builder builder = RowContentFactory.builder();
-            if (cell_0 != null) builder.setFirstCell(cell_0.toString());
-            if (cell_1 != null) builder.setSecondCell(cell_1.toString());
-            if (cell_2 != null) builder.setThirdCell(cell_2.toString());
-            if (cell_3 != null) builder.setFourthCell(cell_3.toString());
-            addRowContent(builder.build());
+        Cell cell_0 = row.getCell(0);
+        Cell cell_1 = row.getCell(1);
+        Cell cell_2 = row.getCell(2);
+        Cell cell_3 = row.getCell(3);
+        Cell cell_4 = row.getCell(4);
+        Cell cell_5 = row.getCell(5);
+        Cell cell_6 = row.getCell(6);
+        RowContentFactory.Builder builder = RowContentFactory.builder();
+        if (cell_0 != null) builder.setContent(cell_0.toString());
+        if (cell_1 != null) builder.setChapter(cell_1.toString());
+        if (cell_2 != null) builder.setSubChapter(cell_2.toString());
+        if (cell_3 != null) builder.setSection(cell_3.toString());
+        if (cell_4 != null) builder.setSubSection(cell_4.toString());
+        if (cell_5 != null) builder.setSubSubSection(cell_5.toString());
+        if (cell_6 != null) builder.setNotes(cell_6.toString());
+        addRowContent(builder.build());
     }
 
     public void calculateIndex() {
-        List<Reference> references = new ArrayList<>();
-        for(RowContent rowContent : rowContentRepository.findAllRowContents()) {
-            for(String content : rowContent.getAllCellContents()) {
-                for(String word : content.split(" ")) {
-                    referenceRepository.createOrUpdateReference(word, rowContent);
-                }
+        for (RowContent rowContent : rowContentRepository.findAllRowContents()) {
+            String subChapter = ((rowContent.getSubChapter() != null)
+                    && (!rowContent.getSubChapter().isEmpty())
+                    && (!"N/A".equals(rowContent.getSubChapter())))
+                    ? rowContent.getSubChapter()
+                    : rowContent.getChapter();
+            for (String word : rowContent.getContent().split(" ")) {
+                String filteredWord = word.trim().replaceAll("[-+.^:,]","");
+                referenceRepository.createOrUpdateReference(
+                        filteredWord,
+                        subChapter,
+                        rowContent);
             }
         }
     }

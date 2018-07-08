@@ -15,7 +15,7 @@ public class RowContentRepositoryImpl extends AbstractJpaDao<Long, RowContent> i
     @Override
     public void addRowContent(RowContent rowContent) {
         persist(rowContent);
-        System.out.println("rowContent added: " + rowContent.toString());
+//        System.out.println("rowContent added: " + rowContent.toString());
     }
 
     @Override

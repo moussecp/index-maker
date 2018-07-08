@@ -1,9 +1,11 @@
 package com.bxy.indexmaker.service.importer;
 
-import com.bxy.indexmaker.domain.RowContentFactory;
 import com.bxy.indexmaker.service.RowContentService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +19,8 @@ public class ExcelImporter {
     private RowContentService rowContentService;
     //TODO use properties file
     private XlsFileAddress xlsFileAddress = XlsFileAddress.builder()
-            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
-//            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\")
+//            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
+            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\")
             .setXlsFileName("programme-ecolo.xls")
             .build();
 

@@ -26,6 +26,11 @@
             add
         </a>
 
+        <spring:url value="/excel/index" var="showIndexUrl"/>
+        <a href="${showIndexUrl}" class="btn btn-success">
+            show index
+        </a>
+
         <spring:url value="/excel/calculateIndex" var="calculateIndexUrl"/>
         <a href="${calculateIndexUrl}" class="btn btn-success">
             calculate index
@@ -35,19 +40,25 @@
     <table class="table table-striped table-bordered table-hover">
         <tr>
             <th>id</th>
-            <th>firstCell content</th>
-            <th>seecondCell content</th>
-            <th>thirdCell content</th>
-            <th>fourthCell content</th>
+            <th>Content</th>
+            <th>Chapter</th>
+            <th>SubChapter</th>
+            <th>Section</th>
+            <th>SubSection</th>
+            <th>SubSubSection</th>
+            <th>Notes</th>
         </tr>
 
-        <c:forEach items="${firstCells}" var="firstCell">
+        <c:forEach items="${rowContents}" var="rowContent">
             <tr>
-                <td>${firstCell.id}</td>
-                <td>${firstCell.firstCell}</td>
-                <td>${firstCell.secondCell}</td>
-                <td>${firstCell.thirdCell}</td>
-                <td>${firstCell.fourthCell}</td>
+                <td>${rowContent.id}</td>
+                <td>${rowContent.content}</td>
+                <td>${rowContent.chapter}</td>
+                <td>${rowContent.subChapter}</td>
+                <td>${rowContent.section}</td>
+                <td>${rowContent.subSection}</td>
+                <td>${rowContent.subSubSection}</td>
+                <td>${rowContent.notes}</td>
             </tr>
         </c:forEach>
     </table>

@@ -1,6 +1,6 @@
 package com.bxy.indexmaker.domain;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,10 +16,25 @@ public class BlackListedWords {
         return list;
     }
 
+    public static List<String> getUpperCasedList() {
+        generateBlackListedWords();
+        list.replaceAll(String::toUpperCase);
+        return filterSpecialCharacters(list);
+    }
+
+    private static List<String> filterSpecialCharacters(List<String> list) {
+        List<String> newList = new ArrayList<>(list);
+        for(String string : list) {
+            newList.add(string.trim().replaceAll("[-+.^:,]",""));
+        }
+        return newList;
+    }
+
     private static void generateBlackListedWords() {
         list = Arrays.asList(new String[]{
-                Strings.EMPTY,
+                StringUtils.EMPTY,
                 " ",
+                "-",
                 "de",
                 "et",
                 "les",
@@ -87,7 +102,54 @@ public class BlackListedWords {
                 "aux",
                 "que",
                 "entre",
-                "toute"
+                "toute",
+                "d''un",
+                "d''une",
+                "nous",
+                "vous",
+                "je",
+                "il",
+                "elle",
+                "elles",
+                "ils",
+                "tu",
+                "on",
+                "cette",
+                "cet",
+                "ceux",
+                "celles",
+                "chaque",
+                "autre",
+                "autres",
+                "sans",
+                "si",
+                "quelque",
+                "quelques",
+                "où",
+                "rendre",
+                "pouvoir",
+                "bien",
+                "tant",
+                "mieux",
+                ".",
+                "(cf.",
+                "dont",
+                "sous",
+                "permettre",
+                "c''est",
+                "prendre",
+                "propos",
+                "soit",
+                "d''autres",
+                "nos",
+                "maximum",
+                "compte",
+                "soient",
+                "lors",
+                "auprès",
+                "cas",
+                "deux",
+                "garantir"
         });
 
     }

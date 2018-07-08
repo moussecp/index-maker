@@ -1,11 +1,10 @@
 package com.bxy.indexmaker.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Entity
@@ -21,7 +20,20 @@ public class Reference implements Identifiable<Long> {
     @Column
     private int count = 0;
     @OneToMany
+    private List<SubChapter> subChapters = new ArrayList<>();
+    @OneToMany
     private List<RowContent> rowContents = new ArrayList<>();
+
+    private Reference(String word, String subChapter, RowContent rowContent) {
+        this.word = word;
+        addOrUpdateSubChapters(subChapter);
+        rowContents.add(rowContent);
+        ++count;
+    }
+
+    public List<SubChapter> getSubChapters() {
+        return subChapters;
+    }
 
     public List<RowContent> getRowContents() {
         return rowContents;
@@ -34,10 +46,17 @@ public class Reference implements Identifiable<Long> {
     public Reference() {
     }
 
-    private Reference(String word, RowContent rowContent) {
-        this.word = word;
-        rowContents.add(rowContent);
-        ++count;
+    public void setSubChapters(List<SubChapter> subChapters) {
+        this.subChapters = subChapters;
+    }
+
+    public void addOrUpdateSubChapters(String subChapter) {
+        Optional<SubChapter> sc = subChapters.stream().filter(s -> s.getSubChapter().equals(subChapter)).findFirst();
+        if(sc.isPresent()) {
+            sc.get().incrementCounter();
+        } else {
+            subChapters.add(new SubChapter(subChapter));
+        }
     }
 
     @Override
@@ -71,6 +90,7 @@ public class Reference implements Identifiable<Long> {
                 "id=" + id +
                 ", word='" + word + '\'' +
                 ", count=" + count +
+                ", subChapters=" + getSubChaptersAsString() +
                 '}';
     }
 
@@ -104,12 +124,31 @@ public class Reference implements Identifiable<Long> {
         return new Builder();
     }
 
-    static class Builder{
+    public String getSubChaptersAsString() {
+        StringBuilder sb = new StringBuilder("[");
+        for(SubChapter subChapter : subChapters) {
+            sb.append("(");
+            sb.append(subChapter.getSubChapter());
+            sb.append(",");
+            sb.append(subChapter.getCounter());
+            sb.append(")");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    static class Builder {
         private String word;
+        private String subChapter;
         private RowContent rowContent;
 
         public Builder setWord(String word) {
             this.word = word;
+            return this;
+        }
+
+        public Builder setSubChapter(String subChapter) {
+            this.subChapter = subChapter;
             return this;
         }
 
@@ -119,7 +158,8 @@ public class Reference implements Identifiable<Long> {
         }
 
         public Reference build() {
-            return new Reference(this.word, this.rowContent);
+            return new Reference(this.word, this.subChapter, this.rowContent);
         }
+
     }
 }

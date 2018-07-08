@@ -20,12 +20,30 @@
         Index calculated:
     </h1>
 
+    <p>
+        <spring:url value="/excel/list" var="rowContentsUrl"/>
+        <a href="${rowContentsUrl}" class="btn btn-success">
+            return to rowContents
+        </a>
+
+        <spring:url value="/excel/calculateIndex" var="calculateIndexUrl"/>
+        <a href="${calculateIndexUrl}" class="btn btn-success">
+            calculate index
+        </a>
+
+        <spring:url value="/excel/generateIntro" var="generateIntroUrl"/>
+        <a href="${generateIntroUrl}" class="btn btn-success">
+            generate intro html
+        </a>
+    </p>
+
 
     <table class="table table-striped table-bordered table-hover">
         <tr>
             <th>word</th>
             <th>count</th>
             <th>rowContents</th>
+            <th>subChapters</th>
         </tr>
 
         <c:forEach items="${indexedReferences}" var="indexedReference">
@@ -33,6 +51,7 @@
                 <td>${indexedReference.word}</td>
                 <td>${indexedReference.count}</td>
                 <td>${indexedReference.getRowContentIds()}</td>
+                <td>${indexedReference.getSubChaptersAsString()}</td>
             </tr>
         </c:forEach>
     </table>

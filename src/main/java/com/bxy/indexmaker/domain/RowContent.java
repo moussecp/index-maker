@@ -1,6 +1,7 @@
 package com.bxy.indexmaker.domain;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -16,26 +17,35 @@ public class RowContent implements Identifiable<Long> {
     private Long id;
 
     @Column
-    private String firstCell;
+    private String content;
     @Column
-    private String secondCell;
+    private String chapter;
     @Column
-    private String thirdCell;
+    private String subChapter;
     @Column
-    private String fourthCell;
+    private String section;
+    @Column
+    private String subSection;
+    @Column
+    private String subSubSection;
+    @Column
+    private String notes;
 
     public RowContent() {
     }
 
-    protected RowContent(String firstCell, String secondCell, String thirdCell, String fourthCell) {
-        this.firstCell = setValueOrEmpty(firstCell);
-        this.secondCell = setValueOrEmpty(secondCell);
-        this.thirdCell = setValueOrEmpty(thirdCell);
-        this.fourthCell = setValueOrEmpty(fourthCell);
+    public RowContent(String content, String chapter, String subChapter, String section, String subSection, String subSubSection, String notes) {
+        this.content = setValueOrEmpty(content);
+        this.chapter = setValueOrEmpty(chapter);
+        this.subChapter = setValueOrEmpty(subChapter);
+        this.section = setValueOrEmpty(section);
+        this.subSection = setValueOrEmpty(subSection);
+        this.subSubSection = setValueOrEmpty(subSubSection);
+        this.notes = setValueOrEmpty(notes);
     }
 
     private String setValueOrEmpty(String value) {
-        return value != null ? value : Strings.EMPTY;
+        return value != null ? value : StringUtils.EMPTY;
     }
 
     @Override
@@ -47,55 +57,82 @@ public class RowContent implements Identifiable<Long> {
         this.id = id;
     }
 
-    public String getFirstCell() {
-        return firstCell;
+    public String getContent() {
+        return content;
     }
 
-    void setFirstCell(String firstCell) {
-        this.firstCell = firstCell;
+    void setContent(String firstCell) {
+        this.content = firstCell;
     }
 
-    public String getSecondCell() {
-        return secondCell;
+    public String getChapter() {
+        return chapter;
     }
 
-    void setSecondCell(String secondCell) {
-        this.secondCell = secondCell;
+    void setChapter(String secondCell) {
+        this.chapter = secondCell;
     }
 
-    public String getThirdCell() {
-        return thirdCell;
+    public String getSubChapter() {
+        return subChapter;
     }
 
-    void setThirdCell(String thirdCell) {
-        this.thirdCell = thirdCell;
+    void setSubChapter(String thirdCell) {
+        this.subChapter = thirdCell;
     }
 
-    public String getFourthCell() {
-        return fourthCell;
+    public String getSection() {
+        return section;
     }
 
-    void setFourthCell(String fourthCell) {
-        this.fourthCell = fourthCell;
+    void setSection(String fourthCell) {
+        this.section = fourthCell;
+    }
+
+    public String getSubSection() {
+        return subSection;
+    }
+
+    public void setSubSection(String subSection) {
+        this.subSection = subSection;
+    }
+
+    public String getSubSubSection() {
+        return subSubSection;
+    }
+
+    public void setSubSubSection(String subSubSection) {
+        this.subSubSection = subSubSection;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public boolean hasAllFieldsEmpty() {
-        return firstCell.isEmpty() && secondCell.isEmpty() && thirdCell.isEmpty() && fourthCell.isEmpty();
+        return content.isEmpty() && chapter.isEmpty() && subChapter.isEmpty() && section.isEmpty();
     }
 
     public List<String> getAllCellContents() {
-        return Arrays.asList(firstCell, secondCell, thirdCell, fourthCell);
+        return Arrays.asList(content, chapter, subChapter, section, subSection, subSubSection, notes);
     }
 
     @Override
     public String toString() {
-        return "RowContent{" +
-                "id=" + id +
-                ", firstCell='" + firstCell + '\'' +
-                ", secondCell='" + secondCell + '\'' +
-                ", thirdCell='" + thirdCell + '\'' +
-                ", fourthCell='" + fourthCell + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("content", content)
+                .append("chapter", chapter)
+                .append("subChapter", subChapter)
+                .append("section", section)
+                .append("subSection", subSection)
+                .append("subSubSection", subSubSection)
+                .append("notes", notes)
+                .toString();
     }
 
     @Override
@@ -103,16 +140,18 @@ public class RowContent implements Identifiable<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RowContent that = (RowContent) o;
-        return Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getFirstCell(), that.getFirstCell()) &&
-                Objects.equals(getSecondCell(), that.getSecondCell()) &&
-                Objects.equals(getThirdCell(), that.getThirdCell()) &&
-                Objects.equals(getFourthCell(), that.getFourthCell());
+        return Objects.equals(id, that.id) &&
+                Objects.equals(content, that.content) &&
+                Objects.equals(chapter, that.chapter) &&
+                Objects.equals(subChapter, that.subChapter) &&
+                Objects.equals(section, that.section) &&
+                Objects.equals(subSection, that.subSection) &&
+                Objects.equals(subSubSection, that.subSubSection) &&
+                Objects.equals(notes, that.notes);
     }
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(getId(), getFirstCell(), getSecondCell(), getThirdCell(), getFourthCell());
+        return Objects.hash(id, content, chapter, subChapter, section, subSection, subSubSection, notes);
     }
 }

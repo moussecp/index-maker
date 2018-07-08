@@ -13,13 +13,13 @@ public class RowContentMapDao extends AbstractMapDao<RowContent> implements RowC
     @Override
     public void addRowContent(RowContent rowContent) {
         rowContent.setId(index++);
-        System.out.println("added: " + rowContent);
+//        System.out.println("added: " + rowContent);
         rowContents.add(rowContent);
     }
 
     @Override
     public List<RowContent> findAllRowContents() {
-        System.out.println("results: " + rowContents);
+//        System.out.println("results: " + rowContents);
         return rowContents;
     }
 
@@ -30,7 +30,7 @@ public class RowContentMapDao extends AbstractMapDao<RowContent> implements RowC
                 .filter(rc -> rc.getId().equals(id))
                 .findAny()
                 .get();
-        System.out.println("found for id: " + id + "results: " + rowContent);
+//        System.out.println("found for id: " + id + "results: " + rowContent);
         return rowContent;
     }
 }

@@ -14,7 +14,7 @@ public class ReferenceRepositoryImpl extends AbstractJpaDao<Long, Reference> imp
 
 
     @Override
-    public void createOrUpdateReference(String word, RowContent rowContent) {
+    public void createOrUpdateReference(String word, String subChapter, RowContent rowContent) {
         //TODO
     }
 
