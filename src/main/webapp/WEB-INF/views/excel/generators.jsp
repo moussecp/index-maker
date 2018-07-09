@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>first cells list</title>
+    <title>html generators</title>
 
     <spring:url value="/css/bootstrap.min.css" var="cssUrl"/>
     <link href="${cssUrl}" rel="stylesheet">
@@ -17,49 +17,40 @@
 <div id="container" class="container">
 
     <h1>
-        Index calculated:
+        HTML generators:
     </h1>
 
     <p>
-        <spring:url value="/excel/list" var="rowContentsUrl"/>
-        <a href="${rowContentsUrl}" class="btn btn-success">
-            return to rowContents
+        <spring:url value="/excel/list" var="rowContentUrl"/>
+        <a href="${rowContentUrl}" class="btn btn-success">
+            show rowContents
         </a>
 
-        <spring:url value="/excel/calculateIndex" var="calculateIndexUrl"/>
-        <a href="${calculateIndexUrl}" class="btn btn-success">
-            calculate index
+        <spring:url value="/excel/index" var="showIndexUrl"/>
+        <a href="${showIndexUrl}" class="btn btn-success">
+            show index
         </a>
-
+    </p>
+    <p>
         <spring:url value="/excel/generateChapter1" var="generateChapter1Url"/>
         <a href="${generateChapter1Url}" class="btn btn-success">
-            generate intro html
+            generate chap. 1 html
         </a>
-
+    </p>
+    <p>
         <spring:url value="/excel/generateChapter2" var="generateChapter2Url"/>
         <a href="${generateChapter2Url}" class="btn btn-success">
-            generate intro html
+            generate chap. 2 html
+        </a>
+    </p>
+    <p>
+        <spring:url value="/excel/generateChapter3" var="generateChapter3Url"/>
+        <a href="${generateChapter3Url}" class="btn btn-success">
+            generate chap. 3 html
         </a>
     </p>
 
 
-    <table class="table table-striped table-bordered table-hover">
-        <tr>
-            <th>word</th>
-            <th>count</th>
-            <th>rowContents</th>
-            <th>subChapters</th>
-        </tr>
-
-        <c:forEach items="${indexedReferences}" var="indexedReference">
-            <tr>
-                <td>${indexedReference.word}</td>
-                <td>${indexedReference.count}</td>
-                <td>${indexedReference.getRowContentIds()}</td>
-                <td>${indexedReference.getSubChaptersAsString()}</td>
-            </tr>
-        </c:forEach>
-    </table>
 
 </div>
 

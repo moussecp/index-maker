@@ -26,8 +26,8 @@ public class ExcelImporterTest {
     private RowContentService rowContentService;
     private ExcelImporter excelImporter;
     private XlsFileAddress xlsFileAddress =XlsFileAddress.builder()
-//            .setXlsFilePath("/home/tms/workspace/indexmaker/src/test/resources/")
-            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\test\\\\resources\\\\")
+            .setXlsFilePath("/home/tms/workspace/indexmaker/src/test/resources/")
+//            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\test\\\\resources\\\\")
             .setXlsFileName("test.xls")
             .build();
 

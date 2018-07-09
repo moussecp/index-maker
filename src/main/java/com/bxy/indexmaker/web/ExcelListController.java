@@ -20,7 +20,10 @@ public class ExcelListController {
     public static final String EXCEL_IMPORT = "excel/add";
     public static final String EXCEL_INDEX = "excel/index";
     public static final String EXCEL_CALCULATE = "excel/calculateIndex";
-    public static final String GENERATE_INTRO = "excel/generateIntro";
+    public static final String GENERATE_CHAPTER1 = "excel/generateChapter1";
+    public static final String GENERATE_CHAPTER2 = "excel/generateChapter2";
+    public static final String GENERATE_CHAPTER3 = "excel/generateChapter3";
+    public static final String HTML_GENERATORS = "excel/generators";
     @Autowired
     private RowContentService rowContentService;
     @Autowired
@@ -57,9 +60,29 @@ public class ExcelListController {
         return "redirect:/" + EXCEL_INDEX;
     }
 
-    @RequestMapping("/" + GENERATE_INTRO)
-    String generateIntroHtml(Model model) throws IOException, InvalidFormatException {
-        htmlGeneratorService.generateIntro();
-        return EXCEL_INDEX;
+    @RequestMapping("/" + GENERATE_CHAPTER1)
+    String generateChapter1Html(Model model) throws IOException, InvalidFormatException {
+        htmlGeneratorService.generateChapter1();
+        return HTML_GENERATORS;
+    }
+
+    @RequestMapping("/" + GENERATE_CHAPTER2)
+    String generateChapter2Html(Model model) throws IOException, InvalidFormatException {
+        htmlGeneratorService.generateChapter2();
+        return HTML_GENERATORS;
+    }
+
+    @RequestMapping("/" + GENERATE_CHAPTER3)
+    String generateChapter3Html(Model model) throws IOException, InvalidFormatException {
+        htmlGeneratorService.generateChapter3();
+        return HTML_GENERATORS;
+    }
+
+    @RequestMapping("/" + HTML_GENERATORS)
+    String showGenerators(Model model) throws IOException, InvalidFormatException {
+
+        rowContentService.loadExcelFileContentIdEmpty();
+        rowContentService.calculateIndexIfEmpty();
+        return HTML_GENERATORS;
     }
 }

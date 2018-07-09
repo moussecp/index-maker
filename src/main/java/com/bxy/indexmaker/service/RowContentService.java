@@ -29,6 +29,15 @@ public class RowContentService {
         return rowContentRepository.findAllRowContents();
     }
 
+    public void loadExcelFileContentIdEmpty() throws IOException, InvalidFormatException {
+        if(rowContentRepository.findAll().isEmpty()) {
+            excelImporter.importExcelFile();
+            System.out.println("Excel file loaded");
+        } else {
+            System.out.println("Excel file already loaded");
+        }
+    }
+
     public void loadExcelFileContent() throws IOException, InvalidFormatException {
         excelImporter.importExcelFile();
     }
@@ -56,6 +65,15 @@ public class RowContentService {
         if (cell_5 != null) builder.setSubSubSection(cell_5.toString());
         if (cell_6 != null) builder.setNotes(cell_6.toString());
         addRowContent(builder.build());
+    }
+
+    public void calculateIndexIfEmpty() {
+        if(referenceRepository.findAll().isEmpty()) {
+            calculateIndex();
+            System.out.println("Index calculated");
+        } else {
+            System.out.println("Index already calculated");
+        }
     }
 
     public void calculateIndex() {
