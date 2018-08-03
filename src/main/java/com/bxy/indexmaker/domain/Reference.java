@@ -162,4 +162,9 @@ public class Reference implements Identifiable<Long> {
         }
 
     }
+
+//    @Override
+//    public int compareTo(Reference other) {
+//        return Integer.compare(this.count, other.count);
+//    }
 }

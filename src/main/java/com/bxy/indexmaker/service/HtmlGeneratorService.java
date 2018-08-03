@@ -51,7 +51,7 @@ public class HtmlGeneratorService {
         String body = getChapterBody(rowContents, references, DIV_ID_CH1);
         String title = CHAPITRE_1;
         String outputFilePath = PATH + CHAPITRE1_HTML;
-        generateHtmlFile(body, title, outputFilePath);
+        generateHtmlFile(body, title, "", getFirstFiveReferences(references), outputFilePath);
         System.out.println("html generated: " + CHAPITRE1_HTML);
     }
 
@@ -62,7 +62,7 @@ public class HtmlGeneratorService {
         String body = getChapterBody(rowContents, references, DIV_ID_CH2);
         String title = CHAPITRE_2;
         String outputFilePath = PATH + CHAPITRE2_HTML;
-        generateHtmlFile(body, title, outputFilePath);
+        generateHtmlFile(body, title, "", getFirstFiveReferences(references), outputFilePath);
         System.out.println("html generated: " + CHAPITRE2_HTML);
     }
 
@@ -70,13 +70,25 @@ public class HtmlGeneratorService {
         List<RowContent> rowContents = getRowContentsFromSubChapter(CHAPITRE_3);
         List<Reference> references = getReferencesFromChapterOrSubChapter(CHAPITRE_3);
 
-        String body = getChapterBody(rowContents, references, DIV_ID_CH3);
+        String body = getChapterBody2(rowContents, references, DIV_ID_CH3);
+        String style = getChapterStyle();
         String title = CHAPITRE_3;
         String outputFilePath = PATH + CHAPITRE3_HTML;
-        generateHtmlFile(body, title, outputFilePath);
+        generateHtmlFile(body, title, style, getFirstFiveReferences(references), outputFilePath);
         System.out.println("html generated: " + CHAPITRE3_HTML);
     }
 
+    private String getFirstFiveReferences(List<Reference> references) {
+        return getFirstReferences(references, 5);
+    }
+
+    private String getFirstReferences(List<Reference> references, long limitNumber) {
+        return references.stream()
+                .sorted((current, other) -> other.getCount().compareTo(current.getCount()))
+                .limit(limitNumber)
+                .map(e -> e.toString())
+                .reduce("; ", String::concat);
+    }
 
     private String getChapterBody(List<RowContent> rowContents, List<Reference> references, String divChapId) {
         StringBuilder sb = new StringBuilder();
@@ -109,7 +121,7 @@ public class HtmlGeneratorService {
             if (!currentChapter.equals(previousChapter)) {
                 isChapterDivOpen = true;
                 if (index != indexMax) {
-                    appendOpeningDiv(sb, divId + DIV_ID_CHAPTER);
+                    appendOpeningDivWithId(sb, divId + DIV_ID_CHAPTER);
                     if (!currentChapter.equals(N_A)) {
                         appendHeading(sb, currentChapter, "h1");
                     }
@@ -121,7 +133,7 @@ public class HtmlGeneratorService {
             if (!currentSubChapter.equals(previousSubChapter)) {
                 isSubChapterDivOpen = true;
                 if (index != indexMax) {
-                    appendOpeningDiv(sb, divId + DIV_ID_SUB_CHAPTER);
+                    appendOpeningDivWithId(sb, divId + DIV_ID_SUB_CHAPTER);
                     if (!currentSubChapter.equals(N_A)) {
                         appendHeading(sb, currentSubChapter, "h2");
                     }
@@ -133,7 +145,7 @@ public class HtmlGeneratorService {
             if (!currentSection.equals(previousSection)) {
                 isSectionDivOpen = true;
                 if (index != indexMax) {
-                    appendOpeningDiv(sb, divId + DIV_ID_SECTION);
+                    appendOpeningDivWithId(sb, divId + DIV_ID_SECTION);
                     if (!currentSection.equals(N_A)) {
                         appendHeading(sb, currentSection, "h3");
                     }
@@ -182,6 +194,135 @@ public class HtmlGeneratorService {
         return sb.toString();
     }
 
+    private String getChapterStyle() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("        h2 {\n" +
+                "            background: url('header-test.png') no-repeat left top;\n" +
+                "            color: white;\n" +
+                "            /*width: 200px;*/\n" +
+                "            /*height: 50px;*/\n" +
+                "        }");
+        sb.append("        .text-block {\n" +
+                "            position: absolute;\n" +
+                "            top: 50%;\n" +
+                "            left: 50%;\n" +
+                "            /*transform: translate(-200%, -20%);*/\n" +
+                "            background-color: black;\n" +
+                "            color: white;\n" +
+                "            padding-left: 20px;\n" +
+                "            padding-right: 20px;\n" +
+                "        }");
+        return sb.toString();
+    }
+
+
+    //TODO COPY from https://v4-alpha.getbootstrap.com/examples/blog/
+    private String getChapterBody2(List<RowContent> rowContents, List<Reference> references, String divChapId) {
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        int indexMax = rowContents.size();
+        String previousChapter = EMPTY;
+        String previousSubChapter = EMPTY;
+        String previousSection = EMPTY;
+        String previousSubSection = EMPTY;
+        String previousSubSubSection = EMPTY;
+        String currentChapter = EMPTY;
+        String currentSubChapter = EMPTY;
+        String currentSection = EMPTY;
+        String currentSubSection = EMPTY;
+        String currentSubSubSection = EMPTY;
+        boolean isChapterDivOpen = false;
+        boolean isSubChapterDivOpen = false;
+        boolean isSectionDivOpen = false;
+        boolean isSubSectionDivOpen = false;
+
+        for (RowContent rowContent : rowContents) {
+            currentChapter = rowContent.getChapter();
+            currentSubChapter = rowContent.getSubChapter();
+            currentSection = rowContent.getSection();
+            currentSubSection = rowContent.getSubSection();
+            currentSubSubSection = rowContent.getSubSubSection();
+            String content = rowContent.getContent();
+
+//            String divId = divChapId + String.format("%05d", index);
+            if (!currentChapter.equals(previousChapter)) {
+                isChapterDivOpen = true;
+                if (index != indexMax) {
+                    appendOpeningHeaderDiv(sb);
+                    if (!currentChapter.equals(N_A)) {
+                        appendBlogTitleHeading(sb, currentChapter);
+                    }
+                }
+
+                    appendClosingDiv(sb);
+
+            }
+            if (!currentSubChapter.equals(previousSubChapter)) {
+                isSubChapterDivOpen = true;
+                if (index != indexMax) {
+                    appendOpeningDiv(sb);
+                    if (!currentSubChapter.equals(N_A)) {
+                        appendHeading(sb, currentSubChapter, "h2");
+                    }
+                }
+                if (index != 0) {
+                    appendClosingDiv(sb);
+                }
+            }
+            if (!currentSection.equals(previousSection)) {
+                isSectionDivOpen = true;
+                if (index != indexMax) {
+                    String image = "forest01.jpg";
+                    sb.append("<img src=\"" + image + "\" alt=\"" + currentSection + "\" style=\"width:100%;\">");
+                    appendOpeningDivWithTextBlock(sb);
+                    if (!currentSection.equals(N_A)) {
+                        appendHeading(sb, currentSection, "h3");
+                    }
+                }
+                if (index != 0) {
+                    appendClosingDiv(sb);
+                }
+            }
+            if (!currentSubSection.equals(previousSubSection)) {
+                isSubSectionDivOpen = true;
+                if (index != indexMax) {
+                    sb.append("<div class=\"list-group\" >");
+                    if (!currentSubSection.equals(N_A)) {
+                        appendHeading(sb, currentSubSection, "h4");
+                    }
+                }
+                if (index != 0) {
+                    appendClosingDiv(sb);
+                }
+            }
+            if (!isHeaderContent(currentChapter, currentSubChapter, currentSection, currentSubSection, content)) {
+//            if(!currentSubSubSection.equals(previousSubSubSection)) {
+//                if(index != indexMax) {
+//                    sb.append("<a href=\"#\" class=\"list-group-item\" id="+divId+">");
+//                }
+//                if(index != 0) {
+//                    sb.append("</a>");
+//                }
+//            }
+                String modifiedContent = content.replaceAll("- ", "<br>- ");
+                sb.append("<p>");
+                sb.append(modifiedContent);
+                sb.append("</p>");
+            }
+            index++;
+            previousChapter = currentChapter;
+            previousSubChapter = currentSubChapter;
+            previousSection = currentSection;
+            previousSubSection = currentSubSection;
+            previousSubSubSection = currentSubSubSection;
+        }
+        if (isChapterDivOpen) appendClosingDiv(sb); //chapter
+        if (isSubChapterDivOpen) appendClosingDiv(sb); //subchapter
+        if (isSectionDivOpen) appendClosingDiv(sb); //section
+        if (isSubSectionDivOpen) appendClosingDiv(sb); //subsection
+        return sb.toString();
+    }
+
     private boolean isHeaderContent(String currentChapter, String currentSubChapter, String currentSection, String currentSubSection, String content) {
         return content.equals(currentChapter) || content.equals(currentSubChapter) || content.equals(currentSection) || content.equals(currentSubSection);
     }
@@ -190,18 +331,37 @@ public class HtmlGeneratorService {
         sb.append("</div>");
     }
 
+    private void appendBlogTitleHeading(StringBuilder sb, String headingTitle) {
+        sb.append("<h1 class=\"blog-title\">" + headingTitle + "</h1>");
+    }
+
     private void appendHeading(StringBuilder sb, String headingTitle, String heading) {
         sb.append("<" + heading + ">" + headingTitle + "</" + heading + ">");
     }
 
-    private void appendOpeningDiv(StringBuilder sb, String divId) {
+    private void appendOpeningDivWithId(StringBuilder sb, String divId) {
         sb.append("<div class=\"container-fluid\" id=" + divId + ">");
     }
 
-    private void generateHtmlFile(String body, String title, String outputFilePath) throws IOException {
+    private void appendOpeningHeaderDiv(StringBuilder sb) {
+        sb.append("<div class=\"blog-header\" >");
+        sb.append("<div class=\"container\">");
+    }
+
+    private void appendOpeningDiv(StringBuilder sb) {
+        sb.append("<div class=\"container-fluid\" >");
+    }
+
+    private void appendOpeningDivWithTextBlock(StringBuilder sb) {
+        sb.append("<div class=\"text-block\" >");
+    }
+
+    private void generateHtmlFile(String body, String title, String style, String bodyIndex, String outputFilePath) throws IOException {
         String htmlString = FileUtils.readFileToString(htmlTemplateFile);
-        htmlString = htmlString.replace("$title", title);
-        htmlString = htmlString.replace("$body", body);
+        htmlString = htmlString.replace("$header-title", title);
+        htmlString = htmlString.replace("$header-style", style);
+        htmlString = htmlString.replace("$body-index", body);
+        htmlString = htmlString.replace("$body-content", body);
         File newHtmlFile = new File(outputFilePath);
         Files.deleteIfExists(newHtmlFile.toPath());
         FileUtils.writeStringToFile(newHtmlFile, htmlString);
