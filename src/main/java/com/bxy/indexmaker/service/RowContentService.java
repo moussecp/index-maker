@@ -29,7 +29,7 @@ public class RowContentService {
         return rowContentRepository.findAllRowContents();
     }
 
-    public void loadExcelFileContentIdEmpty() throws IOException, InvalidFormatException {
+    public void loadExcelFileContentIfEmpty() throws IOException, InvalidFormatException {
         if(rowContentRepository.findAll().isEmpty()) {
             excelImporter.importExcelFile();
             System.out.println("Excel file loaded");

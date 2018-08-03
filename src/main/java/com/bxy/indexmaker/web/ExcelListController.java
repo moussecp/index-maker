@@ -20,6 +20,7 @@ public class ExcelListController {
     public static final String EXCEL_IMPORT = "excel/add";
     public static final String EXCEL_INDEX = "excel/index";
     public static final String EXCEL_CALCULATE = "excel/calculateIndex";
+    public static final String GENERATE_EVERYTHING = "";
     public static final String GENERATE_CHAPTER1 = "excel/generateChapter1";
     public static final String GENERATE_CHAPTER2 = "excel/generateChapter2";
     public static final String GENERATE_CHAPTER3 = "excel/generateChapter3";
@@ -60,29 +61,44 @@ public class ExcelListController {
         return "redirect:/" + EXCEL_INDEX;
     }
 
+    @RequestMapping("/" + GENERATE_EVERYTHING)
+    String generateEverything(Model model) throws IOException, InvalidFormatException {
+        init();
+        htmlGeneratorService.generateChapter1();
+        htmlGeneratorService.generateChapter2();
+        htmlGeneratorService.generateChapter3();
+        return HTML_GENERATORS;
+    }
+
     @RequestMapping("/" + GENERATE_CHAPTER1)
     String generateChapter1Html(Model model) throws IOException, InvalidFormatException {
+        init();
         htmlGeneratorService.generateChapter1();
         return HTML_GENERATORS;
     }
 
     @RequestMapping("/" + GENERATE_CHAPTER2)
     String generateChapter2Html(Model model) throws IOException, InvalidFormatException {
+        init();
         htmlGeneratorService.generateChapter2();
         return HTML_GENERATORS;
     }
 
     @RequestMapping("/" + GENERATE_CHAPTER3)
     String generateChapter3Html(Model model) throws IOException, InvalidFormatException {
+        init();
         htmlGeneratorService.generateChapter3();
         return HTML_GENERATORS;
     }
 
     @RequestMapping("/" + HTML_GENERATORS)
     String showGenerators(Model model) throws IOException, InvalidFormatException {
-
-        rowContentService.loadExcelFileContentIdEmpty();
-        rowContentService.calculateIndexIfEmpty();
+        init();
         return HTML_GENERATORS;
+    }
+
+    private void init() throws IOException, InvalidFormatException {
+        rowContentService.loadExcelFileContentIfEmpty();
+        rowContentService.calculateIndexIfEmpty();
     }
 }
