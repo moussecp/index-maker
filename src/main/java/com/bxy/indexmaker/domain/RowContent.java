@@ -121,6 +121,10 @@ public class RowContent implements Identifiable<Long> {
         return Arrays.asList(content, chapter, subChapter, section, subSection, subSubSection, notes);
     }
 
+    public String getHeaders() {
+        return Arrays.asList(chapter, subChapter, section, subSection, subSubSection).stream().reduce("; ", String::concat);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)

@@ -19,8 +19,8 @@ public class ExcelImporter {
     private RowContentService rowContentService;
     //TODO use properties file
     private XlsFileAddress xlsFileAddress = XlsFileAddress.builder()
-            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
-//            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\")
+//            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
+            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\")
             .setXlsFileName("programme-ecolo.xls")
             .build();
 
