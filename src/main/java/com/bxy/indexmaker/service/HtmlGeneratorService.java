@@ -80,11 +80,11 @@ public class HtmlGeneratorService {
         System.out.println("html generated: " + CHAPITRE3_HTML);
     }
 
-    private String getFirstFiveReferences(List<Reference> references) {
+    protected String getFirstFiveReferences(List<Reference> references) {
         return getFirstReferences(references, 5);
     }
 
-    private String getFirstReferences(List<Reference> references, long limitNumber) {
+    protected String getFirstReferences(List<Reference> references, long limitNumber) {
         return references.stream()
 //                .sorted((current, other) -> other.getCount().compareTo(current.getCount()))
                 .limit(limitNumber)
@@ -92,7 +92,7 @@ public class HtmlGeneratorService {
                 .reduce("; ", String::concat);
     }
 
-    private String getChapterStyle() {
+    protected String getChapterStyle() {
         StringBuilder sb = new StringBuilder();
         sb.append("        h2 {\n" +
                 "            background: url('header-test.png') no-repeat left top;\n" +
@@ -116,7 +116,7 @@ public class HtmlGeneratorService {
 
     //TODO COPY from https://v4-alpha.getbootstrap.com/examples/blog/
 
-    private String buildBody(List<RowContent> rowContents) {
+    protected String buildBody(List<RowContent> rowContents) {
         StringBuilder sb = new StringBuilder();
         int indexChapter = 0;
         for (RowContent rowContent : rowContents) {
@@ -126,7 +126,7 @@ public class HtmlGeneratorService {
         return sb.toString();
     }
 
-    private String buildChapter(List<RowContent> rowContents, int indexChapter) {
+    protected String buildChapter(List<RowContent> rowContents, int indexChapter) {
         StringBuilder sb = new StringBuilder();
         String previousChapter = indexChapter != 0 ? rowContents.get(indexChapter - 1).getChapter() : EMPTY;
         String currentChapter = rowContents.get(indexChapter).getChapter();
@@ -156,7 +156,7 @@ public class HtmlGeneratorService {
 
     }
 
-    private String buildSubChapter(List<RowContent> rowContents, int indexSubChapter) {
+    protected String buildSubChapter(List<RowContent> rowContents, int indexSubChapter) {
         return EMPTY;
     }
 
@@ -266,62 +266,62 @@ public class HtmlGeneratorService {
         return sb.toString();
     }
 
-    private boolean isHeaderContent(String currentChapter, String currentSubChapter, String currentSection, String currentSubSection, String content) {
+    protected boolean isHeaderContent(String currentChapter, String currentSubChapter, String currentSection, String currentSubSection, String content) {
         return content.equals(currentChapter) || content.equals(currentSubChapter) || content.equals(currentSection) || content.equals(currentSubSection);
     }
 
-    private String h1ClassBlogTitle(String headingTitle) {
+    protected String h1ClassBlogTitle(String headingTitle) {
         return "<h1 class=\"blog-title\">" + headingTitle + "</h1>";
     }
 
-    private String heading(String headingTitle, String heading) {
+    protected String heading(String headingTitle, String heading) {
         return "<" + heading + ">" + headingTitle + "</" + heading + ">";
     }
 
-    private String chapterOpeningDiv() {
+    protected String chapterOpeningDiv() {
         return new StringBuilder()
                 .append(openingDivClassBlogHeader())
                 .append(openingDivClassContainer())
                 .toString();
     }
 
-    private String chapterClosingDiv() {
+    protected String chapterClosingDiv() {
         return new StringBuilder()
                 .append(closingDiv())
                 .append(closingDiv())
                 .toString();
     }
 
-    private String openingDivClassContainer() {
+    protected String openingDivClassContainer() {
         return "<div class=\"container\">";
     }
 
-    private String openingDivClassBlogHeader() {
+    protected String openingDivClassBlogHeader() {
         return "<div class=\"blog-header\" >";
     }
 
 
-    private String openingDivClassContainerFluid() {
+    protected String openingDivClassContainerFluid() {
         return "<div class=\"container-fluid\" >";
     }
 
-    private String openingDivClassTextBlock() {
+    protected String openingDivClassTextBlock() {
         return "<div class=\"text-block\" >";
     }
 
-    private String closingDiv() {
+    protected String closingDiv() {
         return "</div>";
     }
 
-    private String openingParagraphClassLeadBlogDescription() {
+    protected String openingParagraphClassLeadBlogDescription() {
         return "<p class=\"lead blog-description\">";
     }
 
-    private String closingParagraph() {
+    protected String closingParagraph() {
         return "</p>";
     }
 
-    private void generateHtmlFile(String body, String title, String style, String bodyIndex, String outputFilePath) throws IOException {
+    protected void generateHtmlFile(String body, String title, String style, String bodyIndex, String outputFilePath) throws IOException {
         String htmlString = FileUtils.readFileToString(htmlTemplateFile);
         htmlString = htmlString.replace("$header-title", title);
         htmlString = htmlString.replace("$header-style", style);
@@ -332,7 +332,7 @@ public class HtmlGeneratorService {
         FileUtils.writeStringToFile(newHtmlFile, htmlString);
     }
 
-    private List<RowContent> getRowContentsFromChapter(String chapter) {
+    protected List<RowContent> getRowContentsFromChapter(String chapter) {
         return rowContentRepository.findAllRowContents()
                 .stream()
                 .filter(rowContent -> rowContent.getChapter().contains(chapter))
@@ -340,14 +340,14 @@ public class HtmlGeneratorService {
                 .collect(Collectors.toList());
     }
 
-    private List<Reference> getReferencesFromChapterOrSubChapter(String chapter) {
+    protected List<Reference> getReferencesFromChapterOrSubChapter(String chapter) {
         return referenceRepository.findAll()
                 .stream()
                 .filter(reference -> reference.getSubChaptersAsString().contains(chapter))
                 .collect(Collectors.toList());
     }
 
-    private List<RowContent> getRowContentsFromSubChapter(String subChapter) {
+    protected List<RowContent> getRowContentsFromSubChapter(String subChapter) {
         return rowContentRepository.findAllRowContents()
                 .stream()
                 .filter(rowContent -> rowContent.getSubChapter().contains(subChapter))

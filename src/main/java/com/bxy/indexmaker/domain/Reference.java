@@ -137,7 +137,7 @@ public class Reference implements Identifiable<Long> {
         return sb.toString();
     }
 
-    static class Builder {
+    public static class Builder {
         private String word;
         private String subChapter;
         private RowContent rowContent;
