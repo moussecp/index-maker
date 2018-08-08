@@ -1,5 +1,6 @@
 package com.bxy.indexmaker.service.importer;
 
+import com.bxy.indexmaker.service.FilePathService;
 import com.bxy.indexmaker.service.RowContentService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -15,13 +16,13 @@ import java.io.IOException;
 @Service
 public class ExcelImporter {
 
+    public static final String XLS_FILE_NAME = "programme-ecolo.xls";
     @Autowired
     private RowContentService rowContentService;
     //TODO use properties file
     private XlsFileAddress xlsFileAddress = XlsFileAddress.builder()
-//            .setXlsFilePath("/home/tms/workspace/indexmaker/src/main/resources/")
-            .setXlsFilePath("D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\")
-            .setXlsFileName("programme-ecolo.xls")
+            .setXlsFilePath(FilePathService.getImportedXlsFilePath())
+            .setXlsFileName(XLS_FILE_NAME)
             .build();
 
 

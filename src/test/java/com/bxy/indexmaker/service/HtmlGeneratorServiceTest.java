@@ -3,10 +3,14 @@ package com.bxy.indexmaker.service;
 import com.bxy.indexmaker.domain.Reference;
 import com.bxy.indexmaker.domain.RowContent;
 import com.bxy.indexmaker.domain.RowContentFactory;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,7 +103,7 @@ public class HtmlGeneratorServiceTest {
     public void getChapterStyle() {
         String chapterStyle = htmlGeneratorService.getChapterStyle();
         String expected = "        h2 {\n" +
-                "            background: url('header-test.png') no-repeat left top;\n" +
+                "            background: url('images/header-test.png') no-repeat left top;\n" +
                 "            color: white;\n" +
                 "            /*width: 200px;*/\n" +
                 "            /*height: 50px;*/\n" +
@@ -127,7 +131,7 @@ public class HtmlGeneratorServiceTest {
     }
 
     @Test
-    public void buildChapter() {
+    public void buildChapterWithMockedSubChapter() {
         List<RowContent> rowContents = buildRowContents(5);
         HtmlGeneratorService mockedService = Mockito.mock(HtmlGeneratorService.class);
         int indexChapter = 0;
@@ -205,7 +209,21 @@ public class HtmlGeneratorServiceTest {
 
     @Test
     public void generateHtmlFile() {
-        //TODO
+    //TODO
+    }
+
+    @Test
+    public void generateHtmlString() throws IOException {
+        List<RowContent> rowContents = buildRowContents(5);
+        String body = htmlGeneratorService.buildBody(rowContents);
+        String title = "TITLE";
+        String style = htmlGeneratorService.getChapterStyle();
+        String bodyIndex = htmlGeneratorService.getFirstFiveReferences(references);
+        String htmlString = htmlGeneratorService.generateHtmlString(body, title, style, bodyIndex);
+
+        File newHtmlFile = new File(FilePathService.getExportedHtmlTestFilePath() + "test.html");
+        Files.deleteIfExists(newHtmlFile.toPath());
+        FileUtils.writeStringToFile(newHtmlFile, htmlString);
     }
 
     @Test

@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.bxy.indexmaker.service.FilePathService.getExportedHtmlFilePath;
+import static com.bxy.indexmaker.service.FilePathService.getHtmlHomePath;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 
@@ -27,16 +29,18 @@ public class HtmlGeneratorService {
     public static final String CHAPITRE1_HTML = "chapitre1.html";
     public static final String CHAPITRE2_HTML = "chapitre2.html";
     public static final String CHAPITRE3_HTML = "chapitre3.html";
-    public static final String PATH = "D:\\\\Workspace\\\\index-maker\\\\src\\\\main\\\\resources\\\\html\\\\";
-    //    public static final String PATH = "/home/tms/workspace/indexmaker/src/main/resources/html/";
     public static final String TEMPLATE_HTML = "template.html";
-    public static final String TEMPLATE_PATH = PATH + TEMPLATE_HTML;
+    public static final String TEMPLATE_PATH = getHtmlHomePath() + TEMPLATE_HTML;
     public static final String N_A = "N/A";
     public static final String DIV_ID_CHAPTER = "-chapter";
     public static final String DIV_ID_SUB_CHAPTER = "-subChapter";
     public static final String DIV_ID_SECTION = "-section";
     public static final String DIV_ID_SUB_SECTION = "-subSection";
     public static final String DIV_ID_SUB_SUB_SECTION = "-subSubSection";
+    public static final String HEADER_TITLE = "$header-title";
+    public static final String HEADER_STYLE = "$header-style";
+    public static final String BODY_INDEX = "$body-index";
+    public static final String BODY_CONTENT = "$body-content";
     private File htmlTemplateFile = new File(TEMPLATE_PATH);
 
     //TODO use real hibernate Repository
@@ -52,9 +56,17 @@ public class HtmlGeneratorService {
 //        String body = getChapterBody(rowContents, references, DIV_ID_CH1);
         String body = buildBody(rowContents);
         String title = CHAPITRE_1;
-        String outputFilePath = PATH + CHAPITRE1_HTML;
-        generateHtmlFile(body, title, "", getFirstFiveReferences(references), outputFilePath);
+        String outputFilePath = getExportedHtmlFilePath() + CHAPITRE1_HTML;
+        generateHtmlFile(body, title, "", getIndex(references), outputFilePath);
         System.out.println("html generated: " + CHAPITRE1_HTML);
+    }
+
+    private String getIndex(List<Reference> references) {
+        return new StringBuilder()
+                .append(openingParagraphClassLeadBlogDescription())
+                .append(getFirstFiveReferences(references))
+                .append(closingParagraph())
+                .toString();
     }
 
     public void generateChapter2() throws IOException {
@@ -64,8 +76,8 @@ public class HtmlGeneratorService {
 //        String body = getChapterBody(rowContents, references, DIV_ID_CH2);
         String body = buildBody(rowContents);
         String title = CHAPITRE_2;
-        String outputFilePath = PATH + CHAPITRE2_HTML;
-        generateHtmlFile(body, title, "", getFirstFiveReferences(references), outputFilePath);
+        String outputFilePath = getExportedHtmlFilePath() + CHAPITRE2_HTML;
+        generateHtmlFile(body, title, "", getIndex(references), outputFilePath);
         System.out.println("html generated: " + CHAPITRE2_HTML);
     }
 
@@ -76,8 +88,8 @@ public class HtmlGeneratorService {
         String body = buildBody(rowContents);//getChapterBody2(rowContents, references, DIV_ID_CH3);
         String style = getChapterStyle();
         String title = CHAPITRE_3;
-        String outputFilePath = PATH + CHAPITRE3_HTML;
-        generateHtmlFile(body, title, style, getFirstFiveReferences(references), outputFilePath);
+        String outputFilePath = getExportedHtmlFilePath() + CHAPITRE3_HTML;
+        generateHtmlFile(body, title, style, getIndex(references), outputFilePath);
         System.out.println("html generated: " + CHAPITRE3_HTML);
     }
 
@@ -92,7 +104,7 @@ public class HtmlGeneratorService {
     protected String getChapterStyle() {
         StringBuilder sb = new StringBuilder();
         sb.append("        h2 {\n" +
-                "            background: url('header-test.png') no-repeat left top;\n" +
+                "            background: url('images/header-test.png') no-repeat left top;\n" +
                 "            color: white;\n" +
                 "            /*width: 200px;*/\n" +
                 "            /*height: 50px;*/\n" +
@@ -204,14 +216,14 @@ public class HtmlGeneratorService {
                 .map(Reference::getWord)
                 .map(e -> e.concat(" ; "))
                 .reduce(String::concat);
-        if(!optionalReferences.isPresent()) {
+        if (!optionalReferences.isPresent()) {
             return EMPTY;
         }
         sb.append(optionalReferences.get())
                 .deleteCharAt(sb.length() - 1)
                 .deleteCharAt(sb.length() - 1)
                 .deleteCharAt(sb.length() - 1)
-                ;
+        ;
         return sb.toString();
     }
 
@@ -372,14 +384,19 @@ public class HtmlGeneratorService {
     }
 
     protected void generateHtmlFile(String body, String title, String style, String bodyIndex, String outputFilePath) throws IOException {
-        String htmlString = FileUtils.readFileToString(htmlTemplateFile);
-        htmlString = htmlString.replace("$header-title", title);
-        htmlString = htmlString.replace("$header-style", style);
-        htmlString = htmlString.replace("$body-index", body);
-        htmlString = htmlString.replace("$body-content", body);
+        String htmlString = generateHtmlString(body, title, style, bodyIndex);
         File newHtmlFile = new File(outputFilePath);
         Files.deleteIfExists(newHtmlFile.toPath());
         FileUtils.writeStringToFile(newHtmlFile, htmlString);
+    }
+
+    protected String generateHtmlString(String body, String title, String style, String bodyIndex) throws IOException {
+        String htmlString = FileUtils.readFileToString(htmlTemplateFile);
+        htmlString = htmlString.replace(HEADER_TITLE, title);
+        htmlString = htmlString.replace(HEADER_STYLE, style);
+        htmlString = htmlString.replace(BODY_INDEX, bodyIndex);
+        htmlString = htmlString.replace(BODY_CONTENT, body);
+        return htmlString;
     }
 
     protected List<RowContent> getRowContentsFromChapter(String chapter) {
