@@ -133,10 +133,6 @@ public class HtmlGeneratorService {
         return "</h1>";
     }
 
-    protected String buildSubChapter(List<RowContent> rowContents, int indexSubChapter) {
-        return EMPTY;
-    }
-
     public static String h2Opening() {
         return "<h2>";
     }
@@ -247,13 +243,7 @@ public class HtmlGeneratorService {
         StringBuilder sbContentWithoutSubChapter = new StringBuilder();
         int indexSubChapter = indexChapter;
 
-        if (!isSubChapterPresent) {
-            String currentHeaders = rowContents.get(indexSubChapter).getHeaders();
-            while (rowContents.size() < indexSubChapter && currentHeaders.equals(rowContents.get(indexSubChapter).getHeaders())) {
-                ++indexSubChapter;
-                sbContentWithoutSubChapter.append(rowContents.get(indexSubChapter).getContent());
-            }
-        }
+        indexSubChapter = buildContentWithoutSubHeader(rowContents, isSubChapterPresent, sbContentWithoutSubChapter, indexSubChapter);
 
         if (isNewChapter) {
             sb.append(chapterOpeningDiv());
@@ -267,7 +257,46 @@ public class HtmlGeneratorService {
         }
         sb.append(buildSubChapter(rowContents, indexSubChapter));
         return sb.length() > 0 ? sb.toString() : EMPTY;
+    }
 
+    protected String buildSubChapter(List<RowContent> rowContents, int indexSubChapter) {
+        StringBuilder sb = new StringBuilder();
+        String previousSubChapter = indexSubChapter != 0 ? rowContents.get(indexSubChapter - 1).getSubChapter() : EMPTY;
+        String currentSubChapter = rowContents.get(indexSubChapter).getSubChapter();
+        boolean isNewSubChapter = !currentSubChapter.equals(previousSubChapter);
+        boolean isSectionPresent = !rowContents.get(indexSubChapter).getSection().equals(N_A);
+        StringBuilder sbContentWithoutSection = new StringBuilder();
+        int indexSection = indexSubChapter;
+
+//        indexSection = buildContentWithoutSubHeader(rowContents, isSectionPresent, sbContentWithoutSection, indexSection);
+
+        if (isNewSubChapter) {
+            sb.append(openingParagraphClassLeadBlogDescription());
+            if (!currentSubChapter.equals(N_A)) {
+                sb.append(h2Opening());
+                sb.append(currentSubChapter);
+                sb.append(h2Closing());
+//                sb.append(sbContentWithoutSection);
+            }
+            sb.append(closingParagraph());
+        }
+        sb.append(buildSection(rowContents, indexSection));
+        return sb.length() > 0 ? sb.toString() : EMPTY;
+    }
+
+    private int buildContentWithoutSubHeader(List<RowContent> rowContents, boolean isSubHeaderPresent, StringBuilder sbContentWithoutSubHeader, int indexSubHeader) {
+        if (!isSubHeaderPresent) {
+            String currentHeaders = rowContents.get(indexSubHeader).getHeaders();
+            while (indexSubHeader < rowContents.size() && currentHeaders.equals(rowContents.get(indexSubHeader).getHeaders())) {
+                sbContentWithoutSubHeader.append(rowContents.get(indexSubHeader).getContent());
+                ++indexSubHeader;
+            }
+        }
+        return indexSubHeader;
+    }
+
+    private String buildSection(List<RowContent> rowContents, int indexSection) {
+        return rowContents.get(indexSection).getContent();
     }
 
     private String getChapterBody2(List<RowContent> rowContents, List<Reference> references, String divChapId) {

@@ -25,6 +25,7 @@ public class HtmlGeneratorServiceTest {
     private static final String SUB_SUB_SECTION = "subSubSection";
     private static final String NOTES = "notes";
     private static final String WORD = "word";
+    public static final String N_A = "N/A";
     private final HtmlGeneratorService htmlGeneratorService = new HtmlGeneratorService();
     private List<Reference> references = new ArrayList<>();
 
@@ -214,7 +215,17 @@ public class HtmlGeneratorServiceTest {
 
     @Test
     public void generateHtmlString() throws IOException {
-        List<RowContent> rowContents = buildRowContents(5);
+        List<RowContent> rowContents = new ArrayList<>();
+        rowContents.add(RowContentFactory.builder()
+                .setContent(WORD)
+                .setChapter(CHAPTER)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent(WORD)
+                .setChapter(CHAPTER)
+                .setSubChapter(SUB_CHAPTER)
+                .build());
+
         String body = htmlGeneratorService.buildBody(rowContents);
         String title = "TITLE";
         String style = htmlGeneratorService.getChapterStyle();

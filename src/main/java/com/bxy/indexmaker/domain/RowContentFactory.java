@@ -10,13 +10,14 @@ public class RowContentFactory {
     }
 
     public static final class Builder {
-        private String content;
-        private String chapter;
-        private String subChapter;
-        private String section;
-        private String subSection;
-        private String subSubSection;
-        private String notes;
+        public static final String N_A = "N/A";
+        private String content = N_A;
+        private String chapter = N_A;
+        private String subChapter = N_A;
+        private String section = N_A;
+        private String subSection = N_A;
+        private String subSubSection = N_A;
+        private String notes = N_A;
 
         private Builder() {
         }
