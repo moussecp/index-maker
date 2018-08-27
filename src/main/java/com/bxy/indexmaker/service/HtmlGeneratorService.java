@@ -8,8 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.bxy.indexmaker.service.FilePathService.getExportedHtmlFilePath;
@@ -93,33 +94,26 @@ public class HtmlGeneratorService {
         System.out.println("html generated: " + CHAPITRE3_HTML);
     }
 
-    protected String getFirstFiveReferences(List<Reference> references) {
-        return getFirstReferences(references, 5);
+    public static String subChapterOpeningDiv() {
+        return new StringBuilder()
+                .append(openingDivClassContainer())
+                .append(openingDivClassRow())
+                .append(openingDivClassColSm8BlogMain())
+                .append(openingDivClassBlogPost())
+                .toString();
     }
 
     public static String h1ClassBlogTitleOpening() {
         return "<h1 class=\"blog-title\">";
     }
 
-    protected String getChapterStyle() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("        h2 {\n" +
-                "            background: url('images/header-test.png') no-repeat left top;\n" +
-                "            color: white;\n" +
-                "            /*width: 200px;*/\n" +
-                "            /*height: 50px;*/\n" +
-                "        }");
-        sb.append("        .text-block {\n" +
-                "            position: absolute;\n" +
-                "            top: 50%;\n" +
-                "            left: 50%;\n" +
-                "            /*transform: translate(-200%, -20%);*/\n" +
-                "            background-color: black;\n" +
-                "            color: white;\n" +
-                "            padding-left: 20px;\n" +
-                "            padding-right: 20px;\n" +
-                "        }");
-        return sb.toString();
+    public static String subChapterClosingDiv() {
+        return new StringBuilder()
+                .append(closingDiv())
+                .append(closingDiv())
+                .append(closingDiv())
+                .append(closingDiv())
+                .toString();
     }
 
 
@@ -175,6 +169,14 @@ public class HtmlGeneratorService {
                 .toString();
     }
 
+    public static String openingDivClassRow() {
+        return "<div class=\"row\" >";
+    }
+
+    public static String openingDivClassColSm8BlogMain() {
+        return "<div class=\"col-sm-8 blog-main\" >";
+    }
+
     public static String openingDivClassContainer() {
         return "<div class=\"container\">";
     }
@@ -191,6 +193,26 @@ public class HtmlGeneratorService {
         return "<div class=\"text-block\" >";
     }
 
+    public static String openingDivClassBlogPost() {
+        return "<div class=\"blog-post\" >";
+    }
+
+    public static String openingParagraph() {
+        return "<p>";
+    }
+
+    protected String getFirstFiveReferencesFormated(List<Reference> references) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(openingDivClassRow());
+        Map<String, Integer> firstReferences = getFirstReferences(references, 5);
+        for (int i = 0; i< firstReferences.size(); i++) {
+            sb.append("<span font-size: 1.0em>");
+            sb.append(firstReferences.)
+        }
+        sb.append(closingDiv());
+        return sb.toString();
+    }
+
     public static String closingDiv() {
         return "</div>";
     }
@@ -199,28 +221,42 @@ public class HtmlGeneratorService {
         return "<p class=\"lead blog-description\">";
     }
 
+    protected String getChapterStyle() {
+        StringBuilder sb = new StringBuilder();
+//        sb.append("        h2 {\n" +
+//                "            background: url('images/header-test.png') no-repeat left top;\n" +
+//                "            color: white;\n" +
+//                "            /*width: 200px;*/\n" +
+//                "            /*height: 50px;*/\n" +
+//                "        }");
+        sb.append("        .text-block {\n" +
+                "            position: absolute;\n" +
+                "            top: 50%;\n" +
+                "            left: 50%;\n" +
+                "            /*transform: translate(-200%, -20%);*/\n" +
+                "            background-color: black;\n" +
+                "            color: white;\n" +
+                "            padding-left: 20px;\n" +
+                "            padding-right: 20px;\n" +
+                "        }");
+        return sb.toString();
+    }
+
     public static String closingParagraph() {
         return "</p>";
     }
 
-    protected String getFirstReferences(List<Reference> references, long limitNumber) {
-        StringBuilder sb = new StringBuilder();
-        Optional<String> optionalReferences = references
+    protected Map<String, Integer> getFirstReferences(List<Reference> references, long limitNumber) {
+        List<Reference> filteredReferences = references
                 .stream()
                 .sorted((current, other) -> other.getCount().compareTo(current.getCount()))
                 .limit(limitNumber)
-                .map(Reference::getWord)
-                .map(e -> e.concat(" ; "))
-                .reduce(String::concat);
-        if (!optionalReferences.isPresent()) {
-            return EMPTY;
+                .collect(Collectors.toList());
+        Map<String, Integer> weightedReferences = new HashMap<>();
+        for (Reference reference : filteredReferences) {
+            weightedReferences.put(reference.getWord(), reference.getCount());
         }
-        sb.append(optionalReferences.get())
-                .deleteCharAt(sb.length() - 1)
-                .deleteCharAt(sb.length() - 1)
-                .deleteCharAt(sb.length() - 1)
-        ;
-        return sb.toString();
+        return weightedReferences;
     }
 
     protected String buildBody(List<RowContent> rowContents) {
@@ -271,16 +307,17 @@ public class HtmlGeneratorService {
 //        indexSection = buildContentWithoutSubHeader(rowContents, isSectionPresent, sbContentWithoutSection, indexSection);
 
         if (isNewSubChapter) {
-            sb.append(openingParagraphClassLeadBlogDescription());
+            sb.append(subChapterOpeningDiv());
             if (!currentSubChapter.equals(N_A)) {
                 sb.append(h2Opening());
                 sb.append(currentSubChapter);
                 sb.append(h2Closing());
-//                sb.append(sbContentWithoutSection);
             }
-            sb.append(closingParagraph());
         }
+        sb.append(openingParagraph());
         sb.append(buildSection(rowContents, indexSection));
+        sb.append(closingParagraph());
+        sb.append(subChapterClosingDiv());
         return sb.length() > 0 ? sb.toString() : EMPTY;
     }
 
