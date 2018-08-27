@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.bxy.indexmaker.service.FilePathService.getExportedHtmlFilePath;
@@ -62,12 +61,8 @@ public class HtmlGeneratorService {
         System.out.println("html generated: " + CHAPITRE1_HTML);
     }
 
-    private String getIndex(List<Reference> references) {
-        return new StringBuilder()
-                .append(openingParagraphClassLeadBlogDescription())
-                .append(getFirstFiveReferences(references))
-                .append(closingParagraph())
-                .toString();
+    public static String openingDivClassRowAligneCenter() {
+        return "<div class=\"row\" align=\"center\" >";
     }
 
     public void generateChapter2() throws IOException {
@@ -173,6 +168,14 @@ public class HtmlGeneratorService {
         return "<div class=\"row\" >";
     }
 
+    private String getIndex(List<Reference> references) {
+        return new StringBuilder()
+                .append(openingParagraphClassLeadBlogDescription())
+                .append(getFirstTenReferencesFormated(references))
+                .append(closingParagraph())
+                .toString();
+    }
+
     public static String openingDivClassColSm8BlogMain() {
         return "<div class=\"col-sm-8 blog-main\" >";
     }
@@ -201,13 +204,31 @@ public class HtmlGeneratorService {
         return "<p>";
     }
 
-    protected String getFirstFiveReferencesFormated(List<Reference> references) {
+    protected String getFirstTenReferencesFormated(List<Reference> references) {
+        int numberOfReferences = 10;
+        double[] fontSizes = {3,4,5,6,7};
+        double steps = fontSizes.length;
+        double max = getBiggestNumberOfCounts(references);
+        double min = getSmallestNumberOfCountsOutOfTop(references, numberOfReferences);
+        List<Long> topReferencesIds = getTopReferences(references, numberOfReferences);
+        Collections.shuffle(topReferencesIds);
+        double step = (max-min)/steps;
         StringBuilder sb = new StringBuilder();
-        sb.append(openingDivClassRow());
-        Map<String, Integer> firstReferences = getFirstReferences(references, 5);
-        for (int i = 0; i< firstReferences.size(); i++) {
-            sb.append("<span font-size: 1.0em>");
-            sb.append(firstReferences.)
+        sb.append(openingDivClassRowAligneCenter());
+        for(Long id : topReferencesIds) {
+            Reference reference = referenceRepository.find(id).get();
+            String url = "something/stupid/" + reference.getWord();
+            double fontSize = fontSizes[0];
+            for(int i = 0; i< steps; i++) {
+                if((i*step + min <= reference.getCount()) && (reference.getCount() <= (i+1)*step + min)) {
+                    fontSize = fontSizes[i];
+                }
+            }
+            sb.append("<a href=\""+ url +" \">");
+            sb.append("<font size=\"" + fontSize + "\">");
+            sb.append(reference.getWord());
+            sb.append("</font> ");
+            sb.append("</a>");
         }
         sb.append(closingDiv());
         return sb.toString();
@@ -246,17 +267,33 @@ public class HtmlGeneratorService {
         return "</p>";
     }
 
-    protected Map<String, Integer> getFirstReferences(List<Reference> references, long limitNumber) {
-        List<Reference> filteredReferences = references
+    private int getBiggestNumberOfCounts(List<Reference> references) {
+        return references
+                .stream()
+                .sorted((current, other) -> other.getCount().compareTo(current.getCount()))
+                .findFirst()
+                .get()
+                .getCount();
+    }
+
+    private int getSmallestNumberOfCountsOutOfTop(List<Reference> references, int top) {
+        return references
+                .stream()
+                .sorted((current, other) -> other.getCount().compareTo(current.getCount()))
+                .limit(top)
+                .sorted(Comparator.comparing(Reference::getCount))
+                .findFirst()
+                .get()
+                .getCount();
+    }
+
+    protected List<Long> getTopReferences(List<Reference> references, long limitNumber) {
+        return references
                 .stream()
                 .sorted((current, other) -> other.getCount().compareTo(current.getCount()))
                 .limit(limitNumber)
+                .map(Reference::getId)
                 .collect(Collectors.toList());
-        Map<String, Integer> weightedReferences = new HashMap<>();
-        for (Reference reference : filteredReferences) {
-            weightedReferences.put(reference.getWord(), reference.getCount());
-        }
-        return weightedReferences;
     }
 
     protected String buildBody(List<RowContent> rowContents) {
@@ -298,24 +335,49 @@ public class HtmlGeneratorService {
     protected String buildSubChapter(List<RowContent> rowContents, int indexSubChapter) {
         StringBuilder sb = new StringBuilder();
         String previousSubChapter = indexSubChapter != 0 ? rowContents.get(indexSubChapter - 1).getSubChapter() : EMPTY;
-        String currentSubChapter = rowContents.get(indexSubChapter).getSubChapter();
+        String currentSubChapter = indexSubChapter < rowContents.size() ? rowContents.get(indexSubChapter).getSubChapter() : EMPTY;
         boolean isNewSubChapter = !currentSubChapter.equals(previousSubChapter);
-        boolean isSectionPresent = !rowContents.get(indexSubChapter).getSection().equals(N_A);
+        boolean isSectionPresent = indexSubChapter < rowContents.size() ? !rowContents.get(indexSubChapter).getSection().equals(N_A) : false;
         StringBuilder sbContentWithoutSection = new StringBuilder();
         int indexSection = indexSubChapter;
 
-//        indexSection = buildContentWithoutSubHeader(rowContents, isSectionPresent, sbContentWithoutSection, indexSection);
+        indexSection = buildContentWithoutSubHeader(rowContents, isSectionPresent, sbContentWithoutSection, indexSection);
 
         if (isNewSubChapter) {
-            sb.append(subChapterOpeningDiv());
+            sb.append(chapterOpeningDiv());
             if (!currentSubChapter.equals(N_A)) {
-                sb.append(h2Opening());
+                sb.append(h1ClassBlogTitleOpening());
                 sb.append(currentSubChapter);
+                sb.append(h1Closing());
+                sb.append(sbContentWithoutSection);
+            }
+            sb.append(chapterClosingDiv());
+        }
+        sb.append(buildSubChapter(rowContents, indexSection));
+        return sb.length() > 0 ? sb.toString() : EMPTY;
+    }
+
+    protected String buildSection(List<RowContent> rowContents, int indexSection) {
+        StringBuilder sb = new StringBuilder();
+        String previousSection = indexSection != 0 ? rowContents.get(indexSection - 1).getSection() : EMPTY;
+        String currentSection = rowContents.get(indexSection).getSection();
+        boolean isNewSection = !currentSection.equals(previousSection);
+        boolean isSubSectionPresent = !rowContents.get(indexSection).getSubSection().equals(N_A);
+        StringBuilder sbContentWithoutSubSection = new StringBuilder();
+        int indexSubSection = indexSection;
+
+//        indexSubSection = buildContentWithoutSubHeader(rowContents, isSubSectionPresent, sbContentWithoutsubSection, indexSubSection);
+
+        if (isNewSection) {
+            sb.append(subChapterOpeningDiv());
+            if (!currentSection.equals(N_A)) {
+                sb.append(h2Opening());
+                sb.append(currentSection);
                 sb.append(h2Closing());
             }
         }
         sb.append(openingParagraph());
-        sb.append(buildSection(rowContents, indexSection));
+        sb.append(buildSubSection(rowContents, indexSection));
         sb.append(closingParagraph());
         sb.append(subChapterClosingDiv());
         return sb.length() > 0 ? sb.toString() : EMPTY;
@@ -323,7 +385,7 @@ public class HtmlGeneratorService {
 
     private int buildContentWithoutSubHeader(List<RowContent> rowContents, boolean isSubHeaderPresent, StringBuilder sbContentWithoutSubHeader, int indexSubHeader) {
         if (!isSubHeaderPresent) {
-            String currentHeaders = rowContents.get(indexSubHeader).getHeaders();
+            String currentHeaders = indexSubHeader < rowContents.size() ? rowContents.get(indexSubHeader).getHeaders() : EMPTY;
             while (indexSubHeader < rowContents.size() && currentHeaders.equals(rowContents.get(indexSubHeader).getHeaders())) {
                 sbContentWithoutSubHeader.append(rowContents.get(indexSubHeader).getContent());
                 ++indexSubHeader;
@@ -332,8 +394,8 @@ public class HtmlGeneratorService {
         return indexSubHeader;
     }
 
-    private String buildSection(List<RowContent> rowContents, int indexSection) {
-        return rowContents.get(indexSection).getContent();
+    private String buildSubSection(List<RowContent> rowContents, int indexSubSection) {
+        return rowContents.get(indexSubSection).getContent();
     }
 
     private String getChapterBody2(List<RowContent> rowContents, List<Reference> references, String divChapId) {
@@ -488,4 +550,7 @@ public class HtmlGeneratorService {
                 .collect(Collectors.toList());
     }
 
+    protected void setReferenceRepository(ReferenceRepository referenceRepository) {
+        this.referenceRepository = referenceRepository;
+    }
 }

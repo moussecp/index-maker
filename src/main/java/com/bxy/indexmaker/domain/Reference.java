@@ -15,6 +15,8 @@ public class Reference implements Identifiable<Long> {
     @SequenceGenerator(name = "REFERENCE_SEQ_GEN", sequenceName = "REFERENCE_SEQ", allocationSize = 1)
     private Long id;
 
+    private static Long idIndex = 1L;
+
     @Column
     private String word;
     @Column
@@ -25,6 +27,7 @@ public class Reference implements Identifiable<Long> {
     private List<RowContent> rowContents = new ArrayList<>();
 
     private Reference(String word, String subChapter, RowContent rowContent) {
+        id = idIndex++;
         this.word = word;
         addOrUpdateSubChapters(subChapter);
         rowContents.add(rowContent);

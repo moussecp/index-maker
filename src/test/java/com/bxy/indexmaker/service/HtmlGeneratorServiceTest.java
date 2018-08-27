@@ -1,8 +1,6 @@
 package com.bxy.indexmaker.service;
 
-import com.bxy.indexmaker.domain.Reference;
-import com.bxy.indexmaker.domain.RowContent;
-import com.bxy.indexmaker.domain.RowContentFactory;
+import com.bxy.indexmaker.domain.*;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,14 +26,18 @@ public class HtmlGeneratorServiceTest {
     public static final String N_A = "N/A";
     private final HtmlGeneratorService htmlGeneratorService = new HtmlGeneratorService();
     private List<Reference> references = new ArrayList<>();
+    private ReferenceRepository referenceRepository = new ReferenceMapDao();
 
     @Before
     public void setup() {
+        htmlGeneratorService.setReferenceRepository(referenceRepository);
+
         for (int i = 0; i < 50; i++) {
             Reference reference = buildReference(i);
             for(int j = 0; j < i ; j++) {
                 reference.addRowContent(buildRowContent(j));
             }
+            referenceRepository.persist(reference);
             references.add(reference);
         }
     }
@@ -78,26 +80,33 @@ public class HtmlGeneratorServiceTest {
         return rowContents;
     }
 
-    @Test
-    public void getFirstFiveReferences() {
-        String firstFiveReferences = htmlGeneratorService.getFirstFiveReferences(references);
-        assertEquals("word_49 ; word_48 ; word_47 ; word_46 ; word_45", firstFiveReferences);
-    }
+//    @Test
+//    public void getFirstFiveReferences() {
+//        String firstFiveReferences = htmlGeneratorService.getFirstFiveReferences(references);
+//        assertEquals("word_49 ; word_48 ; word_47 ; word_46 ; word_45", firstFiveReferences);
+//    }
+
+//    @Test
+//    public void getFirstFiveReferencesWithEmptyReferences() {
+//        String firstFiveReferences = htmlGeneratorService.getFirstFiveReferences(new ArrayList<Reference>());
+//        assertEquals("", firstFiveReferences);
+//    }
+
+//    @Test
+//    public void getFirstReferences() {
+//        String firstReference = htmlGeneratorService.getTopReferences(references, 1);
+//        assertEquals("word_49", firstReference);
+//
+//        String first3References = htmlGeneratorService.getTopReferences(references, 3);
+//        assertEquals("word_49 ; word_48 ; word_47", first3References);
+//
+//    }
 
     @Test
-    public void getFirstFiveReferencesWithEmptyReferences() {
-        String firstFiveReferences = htmlGeneratorService.getFirstFiveReferences(new ArrayList<Reference>());
-        assertEquals("", firstFiveReferences);
-    }
-
-    @Test
-    public void getFirstReferences() {
-        String firstReference = htmlGeneratorService.getFirstReferences(references, 1);
-        assertEquals("word_49", firstReference);
-
-        String first3References = htmlGeneratorService.getFirstReferences(references, 3);
-        assertEquals("word_49 ; word_48 ; word_47", first3References);
-
+    public void getFormatedFirstTenReferences() {
+        String result = htmlGeneratorService.getFirstTenReferencesFormated(references);
+        assertEquals("<div class=\"row\" align=\"center\" ><font size=\"7.0\">word_49</font> <font size=\"7.0\">word_48</font> <font size=\"6.0\">word_47</font> <font size=\"6.0\">word_46</font> <font size=\"5.0\">word_45</font> <font size=\"5.0\">word_44</font> <font size=\"4.0\">word_43</font> <font size=\"4.0\">word_42</font> <font size=\"3.0\">word_41</font> <font size=\"3.0\">word_40</font> </div>",
+                result);
     }
 
     @Test
@@ -229,7 +238,7 @@ public class HtmlGeneratorServiceTest {
         String body = htmlGeneratorService.buildBody(rowContents);
         String title = "TITLE";
         String style = htmlGeneratorService.getChapterStyle();
-        String bodyIndex = htmlGeneratorService.getFirstFiveReferences(references);
+        String bodyIndex = htmlGeneratorService.getFirstTenReferencesFormated(references);
         String htmlString = htmlGeneratorService.generateHtmlString(body, title, style, bodyIndex);
 
         File newHtmlFile = new File(FilePathService.getExportedHtmlTestFilePath() + "test.html");
