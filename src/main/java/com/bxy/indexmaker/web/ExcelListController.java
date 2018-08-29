@@ -1,8 +1,8 @@
 package com.bxy.indexmaker.web;
 
 
-import com.bxy.indexmaker.service.HtmlGeneratorService;
 import com.bxy.indexmaker.service.RowContentService;
+import com.bxy.indexmaker.service.html.HtmlGeneratorService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,9 +64,11 @@ public class ExcelListController {
     @RequestMapping("/" + GENERATE_EVERYTHING)
     String generateEverything(Model model) throws IOException, InvalidFormatException {
         init();
+        htmlGeneratorService.generateAllChapters();
         htmlGeneratorService.generateChapter1();
         htmlGeneratorService.generateChapter2();
         htmlGeneratorService.generateChapter3();
+        htmlGeneratorService.generateChapter4();
         return HTML_GENERATORS;
     }
 

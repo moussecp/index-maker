@@ -39,7 +39,7 @@ public class ExcelImporter {
         if (sheet != null) {
             for (int i = 0; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
-                if (row != null) {
+                if (row != null && !"Contenu".equals(row.getCell(0))) {
                     rowContentService.extractRowContent(row);
                 }
             }

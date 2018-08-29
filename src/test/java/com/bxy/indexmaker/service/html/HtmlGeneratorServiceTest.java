@@ -1,6 +1,7 @@
-package com.bxy.indexmaker.service;
+package com.bxy.indexmaker.service.html;
 
 import com.bxy.indexmaker.domain.*;
+import com.bxy.indexmaker.service.FilePathService;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bxy.indexmaker.service.html.HtmlHeaderStructureService.buildHeadersStructure;
 import static org.junit.Assert.assertEquals;
 
 public class HtmlGeneratorServiceTest {
@@ -104,14 +106,14 @@ public class HtmlGeneratorServiceTest {
 
     @Test
     public void getFormatedFirstTenReferences() {
-        String result = htmlGeneratorService.getFirstTenReferencesFormated(references);
+        String result = htmlGeneratorService.getFirstTwentyReferencesFormatted(references);
         assertEquals("<div class=\"row\" align=\"center\" ><font size=\"7.0\">word_49</font> <font size=\"7.0\">word_48</font> <font size=\"6.0\">word_47</font> <font size=\"6.0\">word_46</font> <font size=\"5.0\">word_45</font> <font size=\"5.0\">word_44</font> <font size=\"4.0\">word_43</font> <font size=\"4.0\">word_42</font> <font size=\"3.0\">word_41</font> <font size=\"3.0\">word_40</font> </div>",
                 result);
     }
 
     @Test
     public void getChapterStyle() {
-        String chapterStyle = htmlGeneratorService.getChapterStyle();
+        String chapterStyle = HtmlTagsUtils.getChapterStyle();
         String expected = "        h2 {\n" +
                 "            background: url('images/header-test.png') no-repeat left top;\n" +
                 "            color: white;\n" +
@@ -226,19 +228,20 @@ public class HtmlGeneratorServiceTest {
     public void generateHtmlString() throws IOException {
         List<RowContent> rowContents = new ArrayList<>();
         rowContents.add(RowContentFactory.builder()
-                .setContent(WORD)
-                .setChapter(CHAPTER)
+                .setContent(WORD+ "0")
+                .setChapter(CHAPTER + "0")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(WORD)
-                .setChapter(CHAPTER)
-                .setSubChapter(SUB_CHAPTER)
+                .setContent(WORD+ "1")
+                .setChapter(CHAPTER+ "1")
+                .setSubChapter(SUB_CHAPTER+ "1")
                 .build());
 
-        String body = htmlGeneratorService.buildBody(rowContents);
+//        String body = htmlGeneratorService.buildBody(rowContents);
+        String body = htmlGeneratorService.buildBodyContentWihStructure(rowContents, buildHeadersStructure(rowContents));
         String title = "TITLE";
-        String style = htmlGeneratorService.getChapterStyle();
-        String bodyIndex = htmlGeneratorService.getFirstTenReferencesFormated(references);
+        String style = HtmlTagsUtils.getChapterStyle();
+        String bodyIndex = htmlGeneratorService.getFirstTwentyReferencesFormatted(references);
         String htmlString = htmlGeneratorService.generateHtmlString(body, title, style, bodyIndex);
 
         File newHtmlFile = new File(FilePathService.getExportedHtmlTestFilePath() + "test.html");
