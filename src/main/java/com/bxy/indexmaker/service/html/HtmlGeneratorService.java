@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.bxy.indexmaker.service.FilePathService.getExportedHtmlFilePath;
+import static com.bxy.indexmaker.service.html.HtmlContentFormatService.getFormattedContent;
 import static com.bxy.indexmaker.service.html.HtmlHeaderStructureService.buildHeadersStructure;
 import static com.bxy.indexmaker.service.html.HtmlTagsUtils.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -49,14 +50,21 @@ public class HtmlGeneratorService {
     protected String buildBodyContentWihStructure(List<RowContent> rowContents, Map<Long, String> headersStructure) {
         Long index = 0L;
         StringBuilder sb = new StringBuilder();
+        int headersStructureMaxIndex = headersStructure.keySet().stream().max(Long::compareTo).get().intValue();
         for (RowContent rowContent : rowContents) {
             String headers = headersStructure.get(index);
             sb.append(headers != null ? headers : EMPTY)
                     .append(newLine())
-                    .append(rowContent.getContent())
+                    .append(getFormattedContent(rowContent))
                     .append(newLine());
             index++;
         }
+        while (index <= headersStructureMaxIndex) {
+            String str = headersStructure.get(index);
+            sb.append(str != null ? str : EMPTY);
+            index ++;
+        }
+
         return sb.toString();
     }
 

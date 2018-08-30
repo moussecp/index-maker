@@ -19,59 +19,102 @@ public class HtmlHeaderStructureService {
         String previousSubSection = N_A;
         String previousSubSubSection = N_A;
         Long index = 0L;
+        int openedDivs = 0;
         for (RowContent rowContent : rowContents) {
+            boolean isNewChapter = false;
+            boolean isNewSubChapter = false;
+            boolean isNewSection = false;
+            boolean isNewSubSection = false;
             StringBuilder sb = new StringBuilder();
+
+            //build closing tabs
             //chapter
             String chapter = rowContent.getChapter();
             if (!previousChapter.equals(chapter) && !N_A.equals(chapter)) {
                 if (!previousChapter.equals(N_A)) {
                     sb.append(buildClosingChapterHeader());
+                    openedDivs--;
                 }
+                isNewChapter = true;
+            }
+            //subChapter
+            String subChapter = rowContent.getSubChapter();
+            if (!previousSubChapter.equals(subChapter) || isNewChapter) {
+                if (!previousSubChapter.equals(N_A)) {
+                    sb.append(buildClosingSubChapterHeader());
+                }
+                isNewSubChapter = true;
+            }
+            //section
+            String section = rowContent.getSection();
+            if (!previousSection.equals(section) || isNewSubChapter) {
+                if (!previousSection.equals(N_A)) {
+                    sb.append(buildClosingSectionHeader());
+                }
+                isNewSection = true;
+            }
+            //subSection
+            String subSection = rowContent.getSubSection();
+            if (!previousSubSection.equals(subSection) || isNewSection) {
+                if (!previousSubSection.equals(N_A)) {
+                    sb.append(buildClosingSubSectionHeader());
+                }
+                isNewSubSection = true;
+            }
+            //subSubSection
+            String subSubSection = rowContent.getSubSubSection();
+            if (!previousSubSubSection.equals(subSubSection) || isNewSubSection) {
+                if (!previousSubSubSection.equals(N_A)) {
+                    sb.append(buildClosingSubSubSectionHeader());
+                }
+            }
+
+            //build opening tags
+            //
+            if (!previousChapter.equals(chapter) && !N_A.equals(chapter)) {
                 sb.append(buildChapterHeader(chapter));
             }
             previousChapter = chapter;
             //subChapter
-            String subChapter = rowContent.getSubChapter();
-            if (!previousSubChapter.equals(subChapter) && !N_A.equals(subChapter)) {
-                if (!previousSubChapter.equals(N_A)) {
-                    sb.append(buildClosingSubChapterHeader());
-                }
+            if ((!previousSubChapter.equals(subChapter) || isNewChapter) && !N_A.equals(subChapter)) {
                 sb.append(buildSubChapterHeader(subChapter));
             }
             previousSubChapter = subChapter;
             //section
-            String section = rowContent.getSection();
-            if (!previousSection.equals(section) && !N_A.equals(section)) {
-                if (!previousSection.equals(N_A)) {
-                    sb.append(buildClosingSectionHeader());
-                }
+            if ((!previousSection.equals(section) || isNewSubChapter) && !N_A.equals(section)) {
                 sb.append(buildSectionHeader(section));
             }
             previousSection = section;
             //subSection
-            String subSection = rowContent.getSubSection();
-            if (!previousSubSection.equals(subSection) && !N_A.equals(subSection)) {
-                if (!previousSubSection.equals(N_A)) {
-                    sb.append(buildClosingSubSectionHeader());
-                }
+            if ((!previousSubSection.equals(subSection) || isNewSection) && !N_A.equals(subSection)) {
                 sb.append(buildSubSectionHeader(subSection));
             }
             previousSubSection = subSection;
             //subSubSection
-            String subSubSection = rowContent.getSubSubSection();
-            if (!previousSubSubSection.equals(subSubSection) && !N_A.equals(subSubSection)) {
-                if (!previousSubSubSection.equals(N_A)) {
-                    sb.append(buildClosingSubSubSectionHeader());
-                }
+            if ((!previousSubSubSection.equals(subSubSection) || isNewSubSection) && !N_A.equals(subSubSection)) {
                 sb.append(buildSubSubSectionHeader(subSubSection));
             }
             previousSubSubSection = subSubSection;
+
+
             if (sb.length() > 0) {
                 headersStructure.put(index, sb.toString());
             }
             index++;
         }
+
+        headersStructure.put(index, (headersStructure.get(index) != null ? headersStructure.get(index) : EMPTY).concat(missingClosingDivs()));
         return headersStructure;
+    }
+
+    private static String missingClosingDivs() {
+        return new StringBuilder()
+                .append(buildClosingChapterHeader())
+                .append(buildClosingSubChapterHeader())
+                .append(buildClosingSectionHeader())
+                .append(buildClosingSubSectionHeader())
+                .append(buildClosingSubSubSectionHeader())
+                .toString();
     }
 
     private static String buildChapterHeader(String chapter) {
@@ -80,7 +123,6 @@ public class HtmlHeaderStructureService {
                 .append(h1ClassBlogTitleOpening())
                 .append(emptyIfNull(chapter))
                 .append(h1Closing())
-                .append(newLine())
                 .toString();
     }
 
@@ -94,7 +136,7 @@ public class HtmlHeaderStructureService {
     private static String buildSubChapterHeader(String subChapter) {
         return new StringBuilder()
                 .append(chapterOpeningDiv())
-                .append(h1ClassBlogTitleOpening())
+                .append(h1Opening())
                 .append(emptyIfNull(subChapter))
                 .append(h1Closing())
                 .toString();
@@ -119,7 +161,6 @@ public class HtmlHeaderStructureService {
     private static String buildClosingSectionHeader() {
         return new StringBuilder()
                 .append(subChapterClosingDiv())
-                .append(newLine())
                 .toString();
     }
 
@@ -135,7 +176,6 @@ public class HtmlHeaderStructureService {
     private static String buildClosingSubSectionHeader() {
         return new StringBuilder()
                 .append(subChapterClosingDiv())
-                .append(newLine())
                 .toString();
     }
 
@@ -151,7 +191,6 @@ public class HtmlHeaderStructureService {
     private static String buildClosingSubSubSectionHeader() {
         return new StringBuilder()
                 .append(subChapterClosingDiv())
-                .append(newLine())
                 .toString();
     }
 
