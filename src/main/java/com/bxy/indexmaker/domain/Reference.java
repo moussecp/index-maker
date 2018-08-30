@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "REFERENCE")
-public class Reference implements Identifiable<Long> {
+public class Reference implements Identifiable<Long>, Comparable<Reference> {
     @Id
     @GeneratedValue(generator = "REFERENCE_SEQ_GEN")
     @SequenceGenerator(name = "REFERENCE_SEQ_GEN", sequenceName = "REFERENCE_SEQ", allocationSize = 1)
@@ -138,6 +138,11 @@ public class Reference implements Identifiable<Long> {
         }
         sb.append("]");
         return sb.toString();
+    }
+
+    @Override
+    public int compareTo(Reference other) {
+        return Integer.compare(this.count, other.count);
     }
 
     public static class Builder {

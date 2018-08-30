@@ -5,10 +5,10 @@ import com.bxy.indexmaker.service.FilePathService;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,13 @@ public class HtmlGeneratorServiceTest {
     private static final String SUB_SUB_SECTION = "subSubSection";
     private static final String NOTES = "notes";
     private static final String WORD = "word";
+    private static final String PARAGRAPH_WITH_ACCENTS = "Le site web de vidéo à la demande Hulu annonce le projet en avril 2016, avec l'actrice Elisabeth Moss dans le rôle principal. Adapté du roman éponyme de Margaret Atwood, La Servante écarlate, publié en 1985, la série est créée par Bruce Miller, qui en est également producteur exécutif, avec Daniel Wilson, Fran Sears, et Warren Littlefield.\n" +
+            "\n" +
+            "Margaret Atwood est productrice et consultante sur le projet, notamment sur les parties du synopsis qui extrapolent le roman, ou le modernisent. Elle fait également une apparition courte dans le tout premier épisode. En juin 2016, Reed Morano a été désignée comme la réalisatrice de la série.\n" +
+            "\n" +
+            "La première bande-annonce a été diffusée par Hulu sur YouTube le 23 mars 2017. ";
     public static final String N_A = "N/A";
+    private static final String LOREM_IPSUM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
     private final HtmlGeneratorService htmlGeneratorService = new HtmlGeneratorService();
     private List<Reference> references = new ArrayList<>();
     private ReferenceRepository referenceRepository = new ReferenceMapDao();
@@ -134,27 +140,6 @@ public class HtmlGeneratorServiceTest {
     }
 
     @Test
-    public void buildBodyWithMockedChapter() {
-        List<RowContent> rowContents = buildRowContents(5);
-        HtmlGeneratorService mockedService = Mockito.mock(HtmlGeneratorService.class);
-        Mockito.when(mockedService.buildBody(rowContents)).thenCallRealMethod();
-        String body = mockedService.buildBody(rowContents);
-        assertEquals("",body);
-    }
-
-    @Test
-    public void buildChapterWithMockedSubChapter() {
-        List<RowContent> rowContents = buildRowContents(5);
-        HtmlGeneratorService mockedService = Mockito.mock(HtmlGeneratorService.class);
-        int indexChapter = 0;
-        Mockito.when(mockedService.buildChapter(rowContents, indexChapter)).thenCallRealMethod();
-        Mockito.when(mockedService.buildSubChapter(rowContents, indexChapter)).thenReturn("");
-        String expected = "<div class=\"blog-header\" ><div class=\"container\"><h1 class=\"blog-title\">chapter_0</h1></div></div>";
-        String chapter = mockedService.buildChapter(rowContents, indexChapter);
-        assertEquals(expected,chapter);
-    }
-
-    @Test
     public void buildSubChapter() {
         //TODO
     }
@@ -228,13 +213,32 @@ public class HtmlGeneratorServiceTest {
     public void generateHtmlString() throws IOException {
         List<RowContent> rowContents = new ArrayList<>();
         rowContents.add(RowContentFactory.builder()
-                .setContent(WORD+ "0")
+                .setContent(PARAGRAPH_WITH_ACCENTS)
                 .setChapter(CHAPTER + "0")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(WORD+ "1")
+                .setContent(LOREM_IPSUM + "1")
                 .setChapter(CHAPTER+ "1")
                 .setSubChapter(SUB_CHAPTER+ "1")
+                .setSection(SECTION)
+                .setSubSection(SUB_SECTION)
+                .setSubSubSection(SUB_SUB_SECTION)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent(LOREM_IPSUM + "2")
+                .setChapter(CHAPTER+ "1")
+                .setSubChapter(SUB_CHAPTER+ "1")
+                .setSection(SECTION)
+                .setSubSection(SUB_SECTION)
+                .setSubSubSection(SUB_SUB_SECTION)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent(LOREM_IPSUM + "3")
+                .setChapter(CHAPTER+ "1")
+                .setSubChapter(SUB_CHAPTER+ "1")
+                .setSection(SECTION)
+                .setSubSection(SUB_SECTION)
+                .setSubSubSection(SUB_SUB_SECTION)
                 .build());
 
 //        String body = htmlGeneratorService.buildBody(rowContents);
@@ -246,7 +250,7 @@ public class HtmlGeneratorServiceTest {
 
         File newHtmlFile = new File(FilePathService.getExportedHtmlTestFilePath() + "test.html");
         Files.deleteIfExists(newHtmlFile.toPath());
-        FileUtils.writeStringToFile(newHtmlFile, htmlString);
+        FileUtils.write(newHtmlFile, htmlString, StandardCharsets.UTF_8);
     }
 
     @Test

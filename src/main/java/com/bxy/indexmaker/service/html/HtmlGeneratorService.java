@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,11 +34,11 @@ public class HtmlGeneratorService {
         String htmlString = generateHtmlString(body, title, style, bodyIndex);
         File newHtmlFile = new File(outputFilePath);
         Files.deleteIfExists(newHtmlFile.toPath());
-        FileUtils.writeStringToFile(newHtmlFile, htmlString);
+        FileUtils.write(newHtmlFile, htmlString, StandardCharsets.UTF_8);
     }
 
     protected String generateHtmlString(String body, String title, String style, String bodyIndex) throws IOException {
-        String htmlString = FileUtils.readFileToString(htmlTemplateFile);
+        String htmlString = FileUtils.readFileToString(htmlTemplateFile, StandardCharsets.UTF_8);
         htmlString = htmlString.replace(HEADER_TITLE, title);
         htmlString = htmlString.replace(HEADER_STYLE, style);
         htmlString = htmlString.replace(BODY_INDEX, bodyIndex);
