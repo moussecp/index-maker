@@ -129,7 +129,7 @@ public class HtmlHeaderStructureService {
     private static String buildClosingChapterHeader() {
         return new StringBuilder()
                 .append(chapterClosingDiv())
-                .append(newLine())
+//                .append(newLine())
                 .toString();
     }
 
@@ -145,7 +145,7 @@ public class HtmlHeaderStructureService {
     private static String buildClosingSubChapterHeader() {
         return new StringBuilder()
                 .append(chapterClosingDiv())
-                .append(newLine())
+//                .append(newLine())
                 .toString();
     }
 

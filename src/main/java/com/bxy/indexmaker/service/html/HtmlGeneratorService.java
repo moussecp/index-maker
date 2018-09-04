@@ -1,6 +1,7 @@
 package com.bxy.indexmaker.service.html;
 
 import com.bxy.indexmaker.domain.*;
+import com.bxy.indexmaker.service.RowContentService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
@@ -8,10 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.bxy.indexmaker.service.FilePathService.getExportedHtmlFilePath;
@@ -30,18 +28,20 @@ public class HtmlGeneratorService {
     private RowContentRepository rowContentRepository = new RowContentMapDao();
     //TODO use real hibernate Repository
     private ReferenceRepository referenceRepository = new ReferenceMapDao();
+    private RowContentService rowContentService = new RowContentService();
 
-    protected void generateHtmlFile(String body, String title, String style, String bodyIndex, String outputFilePath) throws IOException {
-        String htmlString = generateHtmlString(body, title, style, bodyIndex);
+    protected void generateHtmlFile(String body, String title, String style, String bodyIndex, String outputFilePath, String bodyHeaderLinks) throws IOException {
+        String htmlString = generateHtmlString(body, title, style, bodyIndex, bodyHeaderLinks);
         File newHtmlFile = new File(outputFilePath);
         Files.deleteIfExists(newHtmlFile.toPath());
         FileUtils.write(newHtmlFile, htmlString, StandardCharsets.UTF_8);
     }
 
-    protected String generateHtmlString(String body, String title, String style, String bodyIndex) throws IOException {
+    protected String generateHtmlString(String body, String title, String style, String bodyIndex, String bodyHeaderLinks) throws IOException {
         String htmlString = FileUtils.readFileToString(htmlTemplateFile, StandardCharsets.UTF_8);
         htmlString = htmlString.replace(HEADER_TITLE, title);
         htmlString = htmlString.replace(HEADER_STYLE, style);
+        htmlString = htmlString.replace(BODY_HEADER_LINKS, bodyHeaderLinks);
         htmlString = htmlString.replace(BODY_INDEX, bodyIndex);
         htmlString = htmlString.replace(BODY_CONTENT, body);
         return htmlString;
@@ -62,7 +62,7 @@ public class HtmlGeneratorService {
         while (index <= headersStructureMaxIndex) {
             String str = headersStructure.get(index);
             sb.append(str != null ? str : EMPTY);
-            index ++;
+            index++;
         }
 
         return sb.toString();
@@ -77,22 +77,52 @@ public class HtmlGeneratorService {
         String body = buildBodyContentWihStructure(rowContents, buildHeadersStructure(rowContents));
         String title = "Tout le programme";
         String outputFilePath = getExportedHtmlFilePath() + "TOUT.html";
-        generateHtmlFile(body, title, "", bodyIndex, outputFilePath);
-        System.out.println("html generated: " +  "TOUT.html");
+        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getBodyHeaderLinks(rowContentService.getAllRowContentChapters(rowContents)));
+        System.out.println("html generated: " + "TOUT.html");
     }
 
     public void generateChapterNo(String chapterName, String fileName) throws IOException {
         List<RowContent> rowContents = getRowContentsFromChapter(chapterName);
-        if(rowContents.size() == 0) {
+        if (rowContents.size() == 0) {
             rowContents = getRowContentsFromSubChapter(chapterName);
         }
         List<Reference> references = getReferencesFromChapterOrSubChapter(chapterName);
-        String bodyIndex = "";// getFirstTwentyReferencesFormatted(references);
+        String bodyIndex = getFirstTwentyReferencesFormatted(references);
         String body = buildBodyContentWihStructure(rowContents, buildHeadersStructure(rowContents));
         String title = chapterName;
         String outputFilePath = getExportedHtmlFilePath() + fileName;
-        generateHtmlFile(body, title, "", bodyIndex, outputFilePath);
+        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getBodyHeaderLinks(rowContentService.getAllRowContentChapters(rowContents)));
         System.out.println("html generated: " + fileName);
+    }
+
+    public String getBodyHeaderLinks(List<String> headerLinks) {
+        String bodyHeaderLinks = "<div class=\"blog-masthead\">\n" +
+                "    <div class=\"container\">\n" +
+                "        <nav class=\"nav blog-nav\">\n" +
+                "            <a class=\"nav-link active\" href=\"#\">Home</a>\n" +
+                "            <a class=\"nav-link\" href=\"#\">New features</a>\n" +
+                "            <a class=\"nav-link\" href=\"#\">Press</a>\n" +
+                "            <a class=\"nav-link\" href=\"#\">New hires</a>\n" +
+                "            <a class=\"nav-link\" href=\"#\">About</a>\n" +
+                "        </nav>\n" +
+                "    </div>\n" +
+                "</div>";
+        StringBuilder sb = new StringBuilder()
+                .append(openingDivClassBlogMasterhead())
+                .append(openingDivClassContainer())
+                .append(openingNavBlogNav());
+        boolean isFirstHeaderLink = true;
+        for(String headerLink : headerLinks) {
+            if(isFirstHeaderLink) {
+                sb.append(openingActiveNavLink());
+
+            } else {
+                sb.append(openingPassiveNavLink());
+            }
+            sb.append(headerLink);
+            sb.append(closingNavLink());
+        }
+        return sb.toString();
     }
 
     public void generateChapter1() throws IOException {
@@ -132,7 +162,7 @@ public class HtmlGeneratorService {
         sb.append(openingDivClassContainer())
                 .append(openingDivClassRowAlignCenter());
         for (Long id : topReferencesIds) {
-            Reference reference = referenceRepository.find(id).get();
+            Reference reference = referenceRepository.findReference(id);
             String url = "something/stupid/" + reference.getWord();
             double fontSize = fontSizes[0];
             for (int i = 0; i < steps; i++) {
@@ -152,23 +182,21 @@ public class HtmlGeneratorService {
     }
 
     private int getBiggestNumberOfCounts(List<Reference> references) {
-        return references
+        Optional<Reference> first = references
                 .stream()
                 .sorted((current, other) -> other.getCount().compareTo(current.getCount()))
-                .findFirst()
-                .get()
-                .getCount();
+                .findFirst();
+        return first.isPresent() ? first.get().getCount() : 0;
     }
 
     private int getSmallestNumberOfCountsOutOfTop(List<Reference> references, int top) {
-        return references
+        Optional<Reference> first = references
                 .stream()
                 .sorted((current, other) -> other.getCount().compareTo(current.getCount()))
                 .limit(top)
                 .sorted(Comparator.comparing(Reference::getCount))
-                .findFirst()
-                .get()
-                .getCount();
+                .findFirst();
+        return first.isPresent() ? first.get().getCount() : 0;
     }
 
     protected List<Long> getTopReferences(List<Reference> references, long limitNumber) {

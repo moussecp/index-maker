@@ -8,4 +8,5 @@ public interface ReferenceRepository extends Dao<Long, Reference> {
     List<Reference> findTopReferencesMinusBlackListed();
     Reference findReference(Long id);
     Reference findReferenceWithWord(String word);
+    void clearAll();
 }

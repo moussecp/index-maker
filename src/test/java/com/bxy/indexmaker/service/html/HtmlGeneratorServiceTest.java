@@ -2,6 +2,7 @@ package com.bxy.indexmaker.service.html;
 
 import com.bxy.indexmaker.domain.*;
 import com.bxy.indexmaker.service.FilePathService;
+import com.bxy.indexmaker.service.RowContentService;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,12 +19,12 @@ import static org.junit.Assert.assertEquals;
 
 public class HtmlGeneratorServiceTest {
 
-    private static final String CHAPTER = "chapter";
-    private static final String SUB_CHAPTER = "subChapter";
-    private static final String SECTION = "section";
-    private static final String SUB_SECTION = "subSection";
-    private static final String SUB_SUB_SECTION = "subSubSection";
-    private static final String NOTES = "notes";
+    private static final String CHAPTER = "Chapter";
+    private static final String SUB_CHAPTER = "Sub Chapter";
+    private static final String SECTION = "Section";
+    private static final String SUB_SECTION = "Sub Section";
+    private static final String SUB_SUB_SECTION = "Sub Sub Section";
+    private static final String NOTES = "Notes";
     private static final String WORD = "word";
     private static final String PARAGRAPH_WITH_ACCENTS = "Le site web de vidéo à la demande Hulu annonce le projet en avril 2016, avec l'actrice Elisabeth Moss dans le rôle principal. Adapté du roman éponyme de Margaret Atwood, La Servante écarlate, publié en 1985, la série est créée par Bruce Miller, qui en est également producteur exécutif, avec Daniel Wilson, Fran Sears, et Warren Littlefield.\n" +
             "\n" +
@@ -35,9 +36,14 @@ public class HtmlGeneratorServiceTest {
     private final HtmlGeneratorService htmlGeneratorService = new HtmlGeneratorService();
     private List<Reference> references = new ArrayList<>();
     private ReferenceRepository referenceRepository = new ReferenceMapDao();
+    private RowContentRepository rowContentRepository = new RowContentMapDao();
 
     @Before
     public void setup() {
+
+    }
+
+    private void generateDummyReferences() {
         htmlGeneratorService.setReferenceRepository(referenceRepository);
 
         for (int i = 0; i < 50; i++) {
@@ -112,6 +118,7 @@ public class HtmlGeneratorServiceTest {
 
     @Test
     public void getFormatedFirstTenReferences() {
+        generateDummyReferences();
         String result = htmlGeneratorService.getFirstTwentyReferencesFormatted(references);
         assertEquals("<div class=\"row\" align=\"center\" ><font size=\"7.0\">word_49</font> <font size=\"7.0\">word_48</font> <font size=\"6.0\">word_47</font> <font size=\"6.0\">word_46</font> <font size=\"5.0\">word_45</font> <font size=\"5.0\">word_44</font> <font size=\"4.0\">word_43</font> <font size=\"4.0\">word_42</font> <font size=\"3.0\">word_41</font> <font size=\"3.0\">word_40</font> </div>",
                 result);
@@ -211,236 +218,246 @@ public class HtmlGeneratorServiceTest {
 
     @Test
     public void generateHtmlString() throws IOException {
-        List<RowContent> rowContents = buildRichRowContents();
+        addRichRowContentsToRepository();
+        RowContentService rowContentService = new RowContentService();
+        rowContentService.setRowContentRepository(rowContentRepository);
+        rowContentService.setReferenceRepository(referenceRepository);
+        List<RowContent> rowContents = rowContentRepository.findAllRowContents();
+        List<Reference> references = rowContentService.calculateIndex();
+        htmlGeneratorService.setReferenceRepository(referenceRepository);
 
-//        String body = htmlGeneratorService.buildBody(rowContents);
         String body = htmlGeneratorService.buildBodyContentWihStructure(rowContents, buildHeadersStructure(rowContents));
         String title = "TITLE";
         String style = HtmlTagsUtils.getChapterStyle();
         String bodyIndex = htmlGeneratorService.getFirstTwentyReferencesFormatted(references);
-        String htmlString = htmlGeneratorService.generateHtmlString(body, title, style, bodyIndex);
+        String bodyHeaderLinks = htmlGeneratorService.getBodyHeaderLinks(rowContentService.getAllRowContentChapters(rowContents));
+        String htmlString = htmlGeneratorService.generateHtmlString(body, title, style, bodyIndex, bodyHeaderLinks);
 
         File newHtmlFile = new File(FilePathService.getExportedHtmlTestFilePath() + "test.html");
         Files.deleteIfExists(newHtmlFile.toPath());
         FileUtils.write(newHtmlFile, htmlString, StandardCharsets.UTF_8);
     }
 
+    private void addRichRowContentsToRepository() {
+        rowContentRepository.addAll(buildRichRowContents());
+    }
+
     private List<RowContent> buildRichRowContents() {
         List<RowContent> rowContents = new ArrayList<>();
         rowContents.add(RowContentFactory.builder()
                 .setContent(PARAGRAPH_WITH_ACCENTS)
-                .setChapter(CHAPTER + "0")
+                .setChapter(CHAPTER + " 0")
                 .build());
         //chapter 1 section 1
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 1")
                 .setSection(SECTION)
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "1")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 1")
                 .setSection(SECTION)
                 .build());
         //chapter 1 section 2
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "1")
-                .setSection(SECTION + "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 1")
+                .setSection(SECTION + " 2")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "1")
-                .setSection(SECTION + "2")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 1")
+                .setSection(SECTION + " 2")
                 .build());
         //chapter 1 section 1 subsection 1
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
                 .build());
         //chapter 1 section 1 subsection 2
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "1")
-                .setSection(SECTION + "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 1")
+                .setSection(SECTION + " 2")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "1")
-                .setSection(SECTION + "2")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 1")
+                .setSection(SECTION + " 2")
                 .build());
         //chapter 2
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
                 .build());
         // chapter 2 section 1
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
-                .setSection(SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
+                .setSection(SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "2")
-                .setSection(SECTION + "1")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 2")
+                .setSection(SECTION + " 1")
                 .build());
         // chapter 2 subchapter 1 section 1
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "1")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 1")
                 .build());
         //chapter 2 subchapter 1 section 2
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
                 .build());
         //chapter 2 subchapter 1 section 2 subsection 1
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "1")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
-                .setSubSubSection(SUB_SUB_SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
+                .setSubSubSection(SUB_SUB_SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
-                .setSubSubSection(SUB_SUB_SECTION + "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
+                .setSubSubSection(SUB_SUB_SECTION + " 2")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "2")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
-                .setSubSubSection(SUB_SUB_SECTION + "3")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 2")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
+                .setSubSubSection(SUB_SUB_SECTION + " 3")
                 .build());
 
         //chapter 3
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
                 .build());
         // chapter 3 section 1
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
-                .setSection(SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
+                .setSection(SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "3")
-                .setSection(SECTION + "1")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 3")
+                .setSection(SECTION + " 1")
                 .build());
         // chapter 3 subchapter 1 section 1
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "1")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 1")
                 .build());
         //chapter 3 subchapter 1 section 2
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
                 .build());
         //chapter 3 subchapter 1 section 2 subsection 1
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "2")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "1")
+                .setContent(LOREM_IPSUM + " 2")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
-                .setSubSubSection(SUB_SUB_SECTION + "1")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
+                .setSubSubSection(SUB_SUB_SECTION + " 1")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
-                .setSubSubSection(SUB_SUB_SECTION + "2")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
+                .setSubSubSection(SUB_SUB_SECTION + " 2")
                 .build());
         rowContents.add(RowContentFactory.builder()
-                .setContent(LOREM_IPSUM + "1")
-                .setChapter(CHAPTER+ "3")
-                .setSubChapter(SUB_CHAPTER + "1")
-                .setSection(SECTION + "2")
-                .setSubSection(SUB_SECTION + "2")
-                .setSubSubSection(SUB_SUB_SECTION + "3")
+                .setContent(LOREM_IPSUM + " 1")
+                .setChapter(CHAPTER+ " 3")
+                .setSubChapter(SUB_CHAPTER + " 1")
+                .setSection(SECTION + " 2")
+                .setSubSection(SUB_SECTION + " 2")
+                .setSubSubSection(SUB_SUB_SECTION + " 3")
                 .build());
 
         return rowContents;

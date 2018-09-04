@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "ROW_CONTENT")
-public class RowContent implements Identifiable<Long> {
+public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
     @Id
     @GeneratedValue(generator = "ROWCONTENT_SEQ_GEN")
     @SequenceGenerator(name = "ROWCONTENT_SEQ_GEN", sequenceName = "ROWCONTENT_SEQ", allocationSize = 1)
@@ -157,5 +157,10 @@ public class RowContent implements Identifiable<Long> {
     @Override
     public int hashCode() {
         return Objects.hash(id, content, chapter, subChapter, section, subSection, subSubSection, notes);
+    }
+
+    @Override
+    public int compareTo(RowContent rowContent) {
+        return this.getId().compareTo(rowContent.getId());
     }
 }

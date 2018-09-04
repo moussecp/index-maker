@@ -18,6 +18,13 @@ public class RowContentMapDao extends AbstractMapDao<RowContent> implements RowC
     }
 
     @Override
+    public void addAll(List<RowContent> rowContents) {
+        for(RowContent rowContent : rowContents) {
+            addRowContent(rowContent);
+        }
+    }
+
+    @Override
     public List<RowContent> findAllRowContents() {
 //        System.out.println("results: " + rowContents);
         return rowContents;

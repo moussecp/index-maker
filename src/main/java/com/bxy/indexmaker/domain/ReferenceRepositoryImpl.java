@@ -35,4 +35,9 @@ public class ReferenceRepositoryImpl extends AbstractJpaDao<Long, Reference> imp
         //TODO
         return null;
     }
+
+    @Override
+    public void clearAll() {
+        //TODO
+    }
 }

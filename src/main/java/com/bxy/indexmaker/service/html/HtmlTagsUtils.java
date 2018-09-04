@@ -26,18 +26,19 @@ public class HtmlTagsUtils {
     public static final String HEADER_TITLE = "$header-title";
     public static final String HEADER_STYLE = "$header-style";
     public static final String BODY_INDEX = "$body-index";
+    public static final String BODY_HEADER_LINKS = "$body-header-links";
     public static final String BODY_CONTENT = "$body-content";
 
     public static String openingDivClassRowAlignCenter() {
-        return "<div class=\"row\" align=\"center\" >";
+        return "<div class=\"row\" align=\"center\" >\n";
     }
 
     public static String closingDiv() {
-        return "</div>";
+        return "</div>\n";
     }
 
     public static String openingParagraphClassLeadBlogDescription() {
-        return "<p class=\"lead blog-description\">";
+        return "<p class=\"lead blog-description\">\n";
     }
 
     public static String getChapterStyle() {
@@ -62,59 +63,83 @@ public class HtmlTagsUtils {
     }
 
     public static String closingParagraph() {
-        return "</p>";
+        return "</p>\n";
     }
 
     public static String newLine() {
-        return "<br />";
+        return "<br />\n";
     }
 
     public static String openingDivClassColSm8BlogMain() {
-        return "<div class=\"col-sm-8 blog-main\" >";
+        return "<div class=\"col-sm-8 blog-main\" >\n";
     }
 
     public static String openingDivClassContainer() {
-        return "<div class=\"container\">";
+        return "<div class=\"container\">\n";
     }
 
     public static String openingDivClassBlogHeader() {
-        return "<div class=\"blog-header\" >";
+        return "<div class=\"blog-header\" >\n";
     }
 
     public static String openingDivClassContainerFluid() {
-        return "<div class=\"container-fluid\" >";
+        return "<div class=\"container-fluid\" >\n";
     }
 
     public static String openingDivClassTextBlock() {
-        return "<div class=\"text-block\" >";
+        return "<div class=\"text-block\" >\n";
     }
 
     public static String openingDivClassBlogPost() {
-        return "<div class=\"blog-post\" >";
+        return "<div class=\"blog-post\" >\n";
     }
 
     public static String openingParagraph() {
-        return "<p>";
+        return "<p>\n";
     }
 
     public static String h2Closing() {
-        return "</h2>";
+        return "</h2>\n";
     }
 
     public static String h3Opening() {
-        return "<h3>";
+        return "<h3>\n";
     }
 
     public static String h3Closing() {
-        return "</h3>";
+        return "</h3>\n";
     }
 
     public static String h4Opening() {
-        return "<h4>";
+        return "<h4>\n";
     }
 
     public static String h4Closing() {
-        return "</h4>";
+        return "</h4>\n";
+    }
+
+    public static String openingDivClassBlogMasterhead() {
+        return "<div class=\"blog-masthead\">\n";
+    }
+
+    public static String openingNavBlogNav() {
+        return "<nav class=\"nav blog-nav\">\n";
+    }
+
+    public static String closingNav() {
+        return "</nav>\n";
+    }
+
+    public static String openingActiveNavLink() {
+        return "<a class=\"nav-link active\" href=\"#\">\n";
+    }
+
+    public static String openingPassiveNavLink() {
+        return "<a class=\"nav-link\" href=\"#\">\n";
+    }
+
+    public static String closingNavLink() {
+        return "</a>\n";
     }
 
     public static String chapterOpeningDiv() {
@@ -132,19 +157,19 @@ public class HtmlTagsUtils {
     }
 
     public static String openingDivClassRow() {
-        return "<div class=\"row\" >";
+        return "<div class=\"row\" >\n";
     }
 
     public static String h1Opening() {
-        return "<h1>";
+        return "<h1>\n";
     }
 
     public static String h1Closing() {
-        return "</h1>";
+        return "</h1>\n";
     }
 
     public static String h2Opening() {
-        return "<h2>";
+        return "<h2>\n";
     }
 
     public static String subChapterOpeningDiv() {
@@ -157,7 +182,7 @@ public class HtmlTagsUtils {
     }
 
     public static String h1ClassBlogTitleOpening() {
-        return "<h1 class=\"blog-title\">";
+        return "<h1 class=\"blog-title\">\n";
     }
 
     public static String subChapterClosingDiv() {

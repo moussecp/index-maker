@@ -10,12 +10,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class RowContentService {
+
+    public void setRowContentRepository(RowContentRepository rowContentRepository) {
+        this.rowContentRepository = rowContentRepository;
+    }
+
+    public void setReferenceRepository(ReferenceRepository referenceRepository) {
+        this.referenceRepository = referenceRepository;
+    }
+
+    public void setExcelImporter(ExcelImporter excelImporter) {
+        this.excelImporter = excelImporter;
+    }
 
     //TODO use real hibernate Repository
     private RowContentRepository rowContentRepository = new RowContentMapDao();
@@ -76,7 +90,7 @@ public class RowContentService {
         }
     }
 
-    public void calculateIndex() {
+    public List<Reference> calculateIndex() {
         for (RowContent rowContent : rowContentRepository.findAllRowContents()) {
             String subChapter = ((rowContent.getSubChapter() != null)
                     && (!rowContent.getSubChapter().isEmpty())
@@ -91,11 +105,20 @@ public class RowContentService {
                         rowContent);
             }
         }
+        return referenceRepository.findAll();
     }
 
     public List<Reference> getReferencesSortedByCount() {
         List<Reference> allReferences = referenceRepository.findTopReferencesMinusBlackListed();
         allReferences.sort(Comparator.comparing(Reference::getCount).reversed());
         return allReferences;
+    }
+
+    public List<String> getAllRowContentChapters(List<RowContent> rowContents) {
+        return new ArrayList<>(rowContents
+                .stream()
+                .sorted()
+                .map(rowContent -> rowContent.getChapter())
+                .collect(Collectors.toSet()));
     }
 }

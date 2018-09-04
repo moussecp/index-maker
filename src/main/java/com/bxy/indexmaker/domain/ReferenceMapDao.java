@@ -80,4 +80,14 @@ public class ReferenceMapDao extends AbstractMapDao<Reference> implements Refere
         }
         return null;
     }
+
+    @Override
+    public List<Reference> findAll() {
+        return findTopReferencesMinusBlackListed();
+    }
+
+    @Override
+    public void clearAll() {
+        references.clear();
+    }
 }

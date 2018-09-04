@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public class RowContentRepositoryImpl extends AbstractJpaDao<Long, RowContent> implements RowContentRepository {
 
-    protected RowContentRepositoryImpl() {
+    public RowContentRepositoryImpl() {
         super(RowContent.class);
     }
 
@@ -19,16 +19,22 @@ public class RowContentRepositoryImpl extends AbstractJpaDao<Long, RowContent> i
     }
 
     @Override
+    public void addAll(List<RowContent> rowContents) {
+        for (RowContent rowContent : rowContents) {
+            addRowContent(rowContent);
+        }
+    }
+
+    @Override
     public List<RowContent> findAllRowContents() {
-        return getEntityManager().createQuery("select r from RowContent r" , RowContent.class)
+        return getEntityManager().createQuery("select r from RowContent r", RowContent.class)
                 .getResultList();
     }
 
 
-
     @Override
     public RowContent findRowContent(Long id) {
-        return getEntityManager().createQuery("select r from RowContent r where r.id = :id" , RowContent.class)
+        return getEntityManager().createQuery("select r from RowContent r where r.id = :id", RowContent.class)
                 .setParameter("id", id)
                 .getSingleResult();
     }
