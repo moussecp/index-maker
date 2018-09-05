@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bxy.indexmaker.service.html.HtmlHeaderMenuService.getHeaderMenusAsHtml;
 import static com.bxy.indexmaker.service.html.HtmlHeaderStructureService.buildHeadersStructure;
 import static org.junit.Assert.assertEquals;
 
@@ -230,7 +231,7 @@ public class HtmlGeneratorServiceTest {
         String title = "TITLE";
         String style = HtmlTagsUtils.getChapterStyle();
         String bodyIndex = htmlGeneratorService.getFirstTwentyReferencesFormatted(references);
-        String bodyHeaderLinks = htmlGeneratorService.getBodyHeaderLinks(rowContentService.getAllRowContentChapters(rowContents));
+        String bodyHeaderLinks = getHeaderMenusAsHtml(rowContents);
         String htmlString = htmlGeneratorService.generateHtmlString(body, title, style, bodyIndex, bodyHeaderLinks);
 
         File newHtmlFile = new File(FilePathService.getExportedHtmlTestFilePath() + "test.html");

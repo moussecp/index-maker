@@ -15,7 +15,8 @@ public class HtmlTagsUtils {
     public static final String CHAPITRE2_HTML = "chapitre2.html";
     public static final String CHAPITRE3_HTML = "chapitre3.html";
     public static final String CHAPITRE4_HTML = "chapitre4.html";
-    public static final String TEMPLATE_HTML = "template.html";
+    //    public static final String TEMPLATE_HTML = "template.html";
+    public static final String TEMPLATE_HTML = "template2.html";
     public static final String TEMPLATE_PATH = getHtmlHomePath() + TEMPLATE_HTML;
     public static final String N_A = "N/A";
     public static final String DIV_ID_CHAPTER = "-chapter";
@@ -139,6 +140,22 @@ public class HtmlTagsUtils {
     }
 
     public static String closingNavLink() {
+        return "</a>\n";
+    }
+
+    public static String openingListMenuItem() {
+        return "<li class=\"menu-item menu-item-type-custom menu-item-object-custom\">\n";
+    }
+
+    public static String openingAHrefDivWithReference(String reference) {
+        return "<a href=\"#"+ reference + "\" >\n";
+    }
+
+    public static String closingList() {
+        return "</li>\n";
+    }
+
+    public static String closingAHref() {
         return "</a>\n";
     }
 

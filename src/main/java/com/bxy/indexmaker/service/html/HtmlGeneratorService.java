@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import static com.bxy.indexmaker.service.FilePathService.getExportedHtmlFilePath;
 import static com.bxy.indexmaker.service.html.HtmlContentFormatService.getFormattedContent;
+import static com.bxy.indexmaker.service.html.HtmlHeaderMenuService.getHeaderMenusAsHtml;
 import static com.bxy.indexmaker.service.html.HtmlHeaderStructureService.buildHeadersStructure;
 import static com.bxy.indexmaker.service.html.HtmlTagsUtils.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -77,7 +78,7 @@ public class HtmlGeneratorService {
         String body = buildBodyContentWihStructure(rowContents, buildHeadersStructure(rowContents));
         String title = "Tout le programme";
         String outputFilePath = getExportedHtmlFilePath() + "TOUT.html";
-        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getBodyHeaderLinks(rowContentService.getAllRowContentChapters(rowContents)));
+        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getHeaderMenusAsHtml(rowContents));
         System.out.println("html generated: " + "TOUT.html");
     }
 
@@ -91,38 +92,8 @@ public class HtmlGeneratorService {
         String body = buildBodyContentWihStructure(rowContents, buildHeadersStructure(rowContents));
         String title = chapterName;
         String outputFilePath = getExportedHtmlFilePath() + fileName;
-        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getBodyHeaderLinks(rowContentService.getAllRowContentChapters(rowContents)));
+        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getHeaderMenusAsHtml(rowContents));
         System.out.println("html generated: " + fileName);
-    }
-
-    public String getBodyHeaderLinks(List<String> headerLinks) {
-        String bodyHeaderLinks = "<div class=\"blog-masthead\">\n" +
-                "    <div class=\"container\">\n" +
-                "        <nav class=\"nav blog-nav\">\n" +
-                "            <a class=\"nav-link active\" href=\"#\">Home</a>\n" +
-                "            <a class=\"nav-link\" href=\"#\">New features</a>\n" +
-                "            <a class=\"nav-link\" href=\"#\">Press</a>\n" +
-                "            <a class=\"nav-link\" href=\"#\">New hires</a>\n" +
-                "            <a class=\"nav-link\" href=\"#\">About</a>\n" +
-                "        </nav>\n" +
-                "    </div>\n" +
-                "</div>";
-        StringBuilder sb = new StringBuilder()
-                .append(openingDivClassBlogMasterhead())
-                .append(openingDivClassContainer())
-                .append(openingNavBlogNav());
-        boolean isFirstHeaderLink = true;
-        for(String headerLink : headerLinks) {
-            if(isFirstHeaderLink) {
-                sb.append(openingActiveNavLink());
-
-            } else {
-                sb.append(openingPassiveNavLink());
-            }
-            sb.append(headerLink);
-            sb.append(closingNavLink());
-        }
-        return sb.toString();
     }
 
     public void generateChapter1() throws IOException {
