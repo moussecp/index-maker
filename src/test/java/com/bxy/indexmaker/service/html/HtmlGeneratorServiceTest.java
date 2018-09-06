@@ -254,6 +254,7 @@ public class HtmlGeneratorServiceTest {
     private Set<RowContent> buildRichRowContents() {
         Set<RowContent> rowContents = new TreeSet<>();
         rowContents.addAll(buildChapterWithLimitedSubContent());
+        rowContents.addAll(buildChapterWithList());
         rowContents.addAll(buildChapterAverageSubContentSectionsAndSubSections());
         rowContents.addAll(buildChapterWithMassiveSubContentSectionsSubSectionsAndSubSubSections());
         rowContents.addAll(buildChapterWithMassiveSubContentSectionsSubSectionsAndSubSubSections());
@@ -408,6 +409,61 @@ public class HtmlGeneratorServiceTest {
         rowContents.add(RowContentFactory.builder()
                 .setContent(PARAGRAPH_WITH_ACCENTS)
                 .setChapter(CHAPTER + indexChapter++)
+                .build());
+        return rowContents;
+    }
+
+    private Set<RowContent> buildChapterWithList() {
+        Set<RowContent> rowContents = new TreeSet<>();
+        int chaptNo = indexChapter++;
+        int sectNo = indexSection++;
+        // unordered list
+        rowContents.add(RowContentFactory.builder()
+                .setContent("Ce qui serait super à voir ici :")
+                .setChapter(CHAPTER + chaptNo)
+                .setSection(SECTION + sectNo)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent("une liste")
+                .setList("List")
+                .setChapter(CHAPTER + chaptNo)
+                .setSection(SECTION + sectNo)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent("avec")
+                .setList("list")
+                .setChapter(CHAPTER + chaptNo)
+                .setSection(SECTION + sectNo)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent("différents éléments non ordonnés...")
+                .setList("lISt")
+                .setChapter(CHAPTER + chaptNo)
+                .setSection(SECTION + sectNo)
+                .build());
+        //enumerated list
+        rowContents.add(RowContentFactory.builder()
+                .setContent("Ce qui serait super à voir ici :")
+                .setChapter(CHAPTER + chaptNo)
+                .setSection(SECTION + ++sectNo)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent("une liste ")
+                .setList("ENUMERATE")
+                .setChapter(CHAPTER + chaptNo)
+                .setSection(SECTION + sectNo)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent(" avec d'autres")
+                .setList("enumerate")
+                .setChapter(CHAPTER + chaptNo)
+                .setSection(SECTION + sectNo)
+                .build());
+        rowContents.add(RowContentFactory.builder()
+                .setContent(" éléments ordonnés...")
+                .setList("Enumerate")
+                .setChapter(CHAPTER + chaptNo)
+                .setSection(SECTION + sectNo)
                 .build());
         return rowContents;
     }

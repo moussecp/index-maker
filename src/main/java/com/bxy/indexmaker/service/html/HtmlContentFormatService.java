@@ -5,7 +5,11 @@ import com.bxy.indexmaker.domain.RowContent;
 public class HtmlContentFormatService {
 
     public static String getFormattedContent(RowContent rowContent) {
-        return rowContent.getContent();
+        String formattedContent = rowContent.getContent();
+        if(rowContent.isListElement()) {
+
+        }
+        return formattedContent;
     }
 
 //    private static String addNewLinesForLists(String content) {

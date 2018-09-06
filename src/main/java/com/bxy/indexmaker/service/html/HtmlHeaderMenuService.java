@@ -27,11 +27,11 @@ public class HtmlHeaderMenuService {
                             .append(openingAHrefDivWithReference(subMenu.getTagId()))
                             .append(subMenu.getMenuTitle())
                             .append(closingAHref())
-                            .append(closingList());
+                            .append(closingListItem());
                 }
                 sb.append(closingUnorderedList());
             }
-            sb.append(closingList());
+            sb.append(closingListItem());
         }
         return sb.toString();
     }
@@ -50,17 +50,23 @@ public class HtmlHeaderMenuService {
                 headerMenu = null;
             }
             String subChapter = rowContent.getSubChapter();
-            String currentMenuTitle = rowContent.getChapterPlusSubChapter();
-            String currentSubMenuTitle = rowContent.getChapterPlusSubChapterPlusSection();
-            if (!previousMenuTitle.equals(currentMenuTitle) && !HtmlTagsUtils.N_A.equals(subChapter)) {
+            String currentMenuTitle = rowContent.getChapter();
+//            String currentMenuTitle = rowContent.getChapterPlusSubChapter();
+            String currentSubMenuTitle = rowContent.getChapterPlusSubChapter();
+//            String currentSubMenuTitle = rowContent.getChapterPlusSubChapterPlusSection();
+//            if (!previousMenuTitle.equals(currentMenuTitle) && !HtmlTagsUtils.N_A.equals(subChapter)) {
+            if (!previousMenuTitle.equals(currentMenuTitle) && !HtmlTagsUtils.N_A.equals(chapter)) {
                 if (headerMenu != null) {
                     headerMenus.add(headerMenu);
                 }
-                headerMenu = new HeaderMenu(currentMenuTitle, subChapter, rowContent.getFullHeadersId());
+//                headerMenu = new HeaderMenu(currentMenuTitle, subChapter, rowContent.getFullHeadersId());
+                headerMenu = new HeaderMenu(currentMenuTitle, chapter, rowContent.getFullHeadersId());
             }
             String section = rowContent.getSection();
-            if (headerMenu!= null && !previousSubMenuTitle.equals(currentSubMenuTitle) && !HtmlTagsUtils.N_A.equals(section)) {
-                headerMenu.getSubMenus().add(new HeaderMenu(currentMenuTitle, section, rowContent.getFullHeadersId()));
+//            if (headerMenu!= null && !previousSubMenuTitle.equals(currentSubMenuTitle) && !HtmlTagsUtils.N_A.equals(section)) {
+            if (headerMenu!= null && !previousSubMenuTitle.equals(currentSubMenuTitle) && !HtmlTagsUtils.N_A.equals(subChapter)) {
+//                headerMenu.getSubMenus().add(new HeaderMenu(currentMenuTitle, section, rowContent.getFullHeadersId()));
+                headerMenu.getSubMenus().add(new HeaderMenu(currentMenuTitle, subChapter, rowContent.getFullHeadersId()));
             }
             previousMenuTitle = currentMenuTitle;
             previousSubMenuTitle = currentSubMenuTitle;

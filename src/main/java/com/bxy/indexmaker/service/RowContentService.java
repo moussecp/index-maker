@@ -63,21 +63,23 @@ public class RowContentService {
     }
 
     public void extractRowContent(Row row) {
-        Cell cell_0 = row.getCell(0);
-        Cell cell_1 = row.getCell(1);
-        Cell cell_2 = row.getCell(2);
-        Cell cell_3 = row.getCell(3);
-        Cell cell_4 = row.getCell(4);
-        Cell cell_5 = row.getCell(5);
-        Cell cell_6 = row.getCell(6);
+        Cell content = row.getCell(0);
+        Cell chapter = row.getCell(2);
+        Cell subChapter = row.getCell(3);
+        Cell section = row.getCell(4);
+        Cell subSection = row.getCell(5);
+        Cell subSubSection = row.getCell(6);
+        Cell notes = row.getCell(7);
+        Cell list = row.getCell(1);
         RowContentFactory.Builder builder = RowContentFactory.builder();
-        if (cell_0 != null) builder.setContent(cell_0.toString());
-        if (cell_1 != null) builder.setChapter(cell_1.toString());
-        if (cell_2 != null) builder.setSubChapter(cell_2.toString());
-        if (cell_3 != null) builder.setSection(cell_3.toString());
-        if (cell_4 != null) builder.setSubSection(cell_4.toString());
-        if (cell_5 != null) builder.setSubSubSection(cell_5.toString());
-        if (cell_6 != null) builder.setNotes(cell_6.toString());
+        if (content != null) builder.setContent(content.toString());
+        if (chapter != null) builder.setChapter(chapter.toString());
+        if (subChapter != null) builder.setSubChapter(subChapter.toString());
+        if (section != null) builder.setSection(section.toString());
+        if (subSection != null) builder.setSubSection(subSection.toString());
+        if (subSubSection != null) builder.setSubSubSection(subSubSection.toString());
+        if (notes != null) builder.setNotes(notes.toString());
+        if (list != null) builder.setList(list.toString());
         addRowContent(builder.build());
     }
 

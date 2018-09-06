@@ -33,13 +33,24 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
     private String subSubSection;
     @Column
     private String notes;
+    @Column
+    private ListType listType;
     private static Long idIndex = 0L;
 
     public RowContent() {
     }
+
     private static int headerIndex = 0;
 
-    public RowContent(String content, String chapter, String subChapter, String section, String subSection, String subSubSection, String notes) {
+    public RowContent(
+            String content,
+            String chapter,
+            String subChapter,
+            String section,
+            String subSection,
+            String subSubSection,
+            String notes,
+            ListType listType) {
         this.id = ++idIndex;
         this.content = setValueOrEmpty(content);
         this.chapter = setValueOrEmpty(chapter);
@@ -48,6 +59,7 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
         this.subSection = setValueOrEmpty(subSection);
         this.subSubSection = setValueOrEmpty(subSubSection);
         this.notes = setValueOrEmpty(notes);
+        this.listType = listType;
     }
 
     @Override
@@ -111,6 +123,10 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
         return notes;
     }
 
+    public ListType getListType() {
+        return listType;
+    }
+
     public void setNotes(String notes) {
         this.notes = notes;
     }
@@ -148,7 +164,7 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
     public String getFullHeadersId() {
         return getFullHeadersConverted()
                 .stream()
-                .collect (Collectors.joining ("-"))
+                .collect(Collectors.joining("-"))
                 .toLowerCase()
                 .replace(" ", "-")
 //                .concat(String.format("-%03d", ++headerIndex))
@@ -201,5 +217,26 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
 
     public String getChapterPlusSubChapterPlusSection() {
         return chapter + subChapter + section;
+    }
+
+    public boolean hasContentDuplicatingAHeaderTitle() {
+        return content != null
+                && (content.equals(chapter) ||
+                content.equals(subChapter) ||
+                content.equals(section) ||
+                content.equals(subSection) ||
+                content.equals(subSubSection));
+    }
+
+    public boolean isListElement() {
+        return listType.isList();
+    }
+
+    public boolean isClassicList() {
+        return listType.isClassicList();
+    }
+
+    public boolean isEnumeratedList() {
+        return listType.isEnumeratedList();
     }
 }

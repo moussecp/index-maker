@@ -2,6 +2,8 @@ package com.bxy.indexmaker.domain;
 
 import org.springframework.stereotype.Service;
 
+import static com.bxy.indexmaker.domain.ListType.*;
+
 @Service
 public class RowContentFactory {
 
@@ -18,6 +20,7 @@ public class RowContentFactory {
         private String subSection = N_A;
         private String subSubSection = N_A;
         private String notes = N_A;
+        private ListType listType = ListType.NONE;
 
         private Builder() {
         }
@@ -26,33 +29,54 @@ public class RowContentFactory {
             this.content = content;
             return this;
         }
+
         public Builder setChapter(String chapter) {
             this.chapter = chapter;
             return this;
         }
+
         public Builder setSubChapter(String subChapter) {
             this.subChapter = subChapter;
             return this;
         }
+
         public Builder setSection(String section) {
             this.section = section;
             return this;
         }
+
         public Builder setSubSection(String subSection) {
             this.subSection = subSection;
             return this;
         }
+
         public Builder setSubSubSection(String subSubSection) {
             this.subSubSection = subSubSection;
             return this;
         }
+
         public Builder setNotes(String notes) {
             this.notes = notes;
             return this;
         }
 
         public RowContent build() {
-            return new RowContent(content, chapter, subChapter, section, subSection, subSubSection, notes);
+            return new RowContent(content, chapter, subChapter, section, subSection, subSubSection, notes, listType);
+        }
+
+        public Builder setList(String list) {
+            switch (list.toUpperCase().trim()) {
+                case "LIST":
+                    this.listType = LIST;
+                    break;
+                case "ENUMERATE":
+                    this.listType = ENUMERATE;
+                    break;
+                default:
+                    this.listType = NONE;
+                    break;
+            }
+            return this;
         }
     }
 }

@@ -13,7 +13,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.bxy.indexmaker.service.FilePathService.getExportedHtmlFilePath;
-import static com.bxy.indexmaker.service.html.HtmlContentFormatService.getFormattedContent;
 import static com.bxy.indexmaker.service.html.HtmlHeaderMenuService.getHeaderMenusAsHtml;
 import static com.bxy.indexmaker.service.html.HtmlHeaderStructureService.buildHeadersStructure;
 import static com.bxy.indexmaker.service.html.HtmlTagsUtils.*;
@@ -54,10 +53,11 @@ public class HtmlGeneratorService {
         int headersStructureMaxIndex = headersStructure.keySet().stream().max(Long::compareTo).get().intValue();
         for (RowContent rowContent : rowContents) {
             String headers = headersStructure.get(index);
-            sb.append(headers != null ? headers : EMPTY)
-                    .append(newLine())
-                    .append(getFormattedContent(rowContent))
-                    .append(newLine());
+            sb.append(headers != null ? headers : EMPTY);
+            if (!rowContent.hasContentDuplicatingAHeaderTitle()) {
+                String content = rowContent.getContent();
+                sb.append(content);
+            }
             index++;
         }
         while (index <= headersStructureMaxIndex) {

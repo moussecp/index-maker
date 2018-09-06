@@ -79,6 +79,10 @@ public class HtmlTagsUtils {
         return "<div class=\"container\">\n";
     }
 
+    public static String openingDivClassEntryContent() {
+        return "<div class=\"entry-content\">\n";
+    }
+
     public static String openingDivClassContainerWithId(String id) {
         return "<div class=\"container\" id=\"" + id + "\" >\n";
     }
@@ -88,7 +92,7 @@ public class HtmlTagsUtils {
     }
 
     public static String openingDivClassBlogHeaderWithId(String id) {
-        return "<div class=\"blog-header\" id=\" " + id + "\" >\n";
+        return "<div class=\"blog-header\" id=\"" + id + "\" >\n";
     }
 
     public static String openingDivClassContainerFluid() {
@@ -155,11 +159,15 @@ public class HtmlTagsUtils {
         return "<li class=\"menu-item menu-item-type-custom menu-item-object-custom\">\n";
     }
 
+    public static String openingListItem() {
+        return "<li>\n";
+    }
+
     public static String openingAHrefDivWithReference(String reference) {
         return "<a href=\"#"+ reference + "\" >\n";
     }
 
-    public static String closingList() {
+    public static String closingListItem() {
         return "</li>\n";
     }
 
@@ -171,14 +179,21 @@ public class HtmlTagsUtils {
         return "<ul class=\"sub-menu\">\n";
     }
 
+    public static String openingUnorderedList() {
+        return "<ul>\n";
+    }
+
     public static String closingUnorderedList() {
         return "</ul>\n";
     }
+
+
 
     public static String chapterOpeningDiv() {
         return new StringBuilder()
                 .append(openingDivClassBlogHeader())
                 .append(openingDivClassContainer())
+                .append(openingDivClassEntryContent())
                 .toString();
     }
 
@@ -186,6 +201,7 @@ public class HtmlTagsUtils {
         return new StringBuilder()
                 .append(openingDivClassBlogHeaderWithId(id))
                 .append(openingDivClassContainer())
+                .append(openingDivClassEntryContent())
                 .toString();
     }
 
@@ -193,11 +209,16 @@ public class HtmlTagsUtils {
         return new StringBuilder()
                 .append(closingDiv())
                 .append(closingDiv())
+                .append(closingDiv())
                 .toString();
     }
 
     public static String openingDivClassRow() {
         return "<div class=\"row\" >\n";
+    }
+
+    public static String openingDivClassRowWithId(String id) {
+        return "<div class=\"row\" id=\"" + id + "\" >\n";
     }
 
     public static String h1Opening() {
@@ -214,19 +235,21 @@ public class HtmlTagsUtils {
 
     public static String subChapterOpeningDiv() {
         return new StringBuilder()
-                .append(openingDivClassContainer())
+//                .append(openingDivClassContainer())
+//                .append(openingDivClassEntryContent())
                 .append(openingDivClassRow())
-                .append(openingDivClassColSm8BlogMain())
-                .append(openingDivClassBlogPost())
+//                .append(openingDivClassColSm8BlogMain())
+//                .append(openingDivClassBlogPost())
                 .toString();
     }
 
     public static String subChapterOpeningDivWithId(String id) {
         return new StringBuilder()
-                .append(openingDivClassContainerWithId(id))
-                .append(openingDivClassRow())
-                .append(openingDivClassColSm8BlogMain())
-                .append(openingDivClassBlogPost())
+//                .append(openingDivClassContainerWithId(id))
+//                .append(openingDivClassEntryContent())
+                .append(openingDivClassRowWithId(id))
+//                .append(openingDivClassColSm8BlogMain())
+//                .append(openingDivClassBlogPost())
                 .toString();
     }
 
@@ -237,9 +260,13 @@ public class HtmlTagsUtils {
     public static String subChapterClosingDiv() {
         return new StringBuilder()
                 .append(closingDiv())
-                .append(closingDiv())
-                .append(closingDiv())
-                .append(closingDiv())
+//                .append(closingDiv())
+//                .append(closingDiv())
+//                .append(closingDiv())
                 .toString();
+    }
+
+    public static String horizontalLine() {
+        return "<hr>\n";
     }
 }
