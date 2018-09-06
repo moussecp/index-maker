@@ -64,13 +64,14 @@ public class RowContentService {
 
     public void extractRowContent(Row row) {
         Cell content = row.getCell(0);
-        Cell chapter = row.getCell(2);
-        Cell subChapter = row.getCell(3);
-        Cell section = row.getCell(4);
-        Cell subSection = row.getCell(5);
-        Cell subSubSection = row.getCell(6);
-        Cell notes = row.getCell(7);
+        Cell chapter = row.getCell(3);
+        Cell subChapter = row.getCell(4);
+        Cell section = row.getCell(5);
+        Cell subSection = row.getCell(6);
+        Cell subSubSection = row.getCell(7);
+        Cell notes = row.getCell(8);
         Cell list = row.getCell(1);
+        Cell bold = row.getCell(2);
         RowContentFactory.Builder builder = RowContentFactory.builder();
         if (content != null) builder.setContent(content.toString());
         if (chapter != null) builder.setChapter(chapter.toString());
@@ -80,6 +81,7 @@ public class RowContentService {
         if (subSubSection != null) builder.setSubSubSection(subSubSection.toString());
         if (notes != null) builder.setNotes(notes.toString());
         if (list != null) builder.setList(list.toString());
+        if (bold != null) builder.setBold(bold.toString());
         addRowContent(builder.build());
     }
 

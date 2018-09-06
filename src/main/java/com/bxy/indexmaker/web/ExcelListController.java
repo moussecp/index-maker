@@ -65,10 +65,10 @@ public class ExcelListController {
     String generateEverything(Model model) throws IOException, InvalidFormatException {
         init();
         htmlGeneratorService.generateAllChapters();
-        htmlGeneratorService.generateChapter1();
-        htmlGeneratorService.generateChapter2();
-        htmlGeneratorService.generateChapter3();
-        htmlGeneratorService.generateChapter4();
+//        htmlGeneratorService.generateChapter1();
+//        htmlGeneratorService.generateChapter2();
+//        htmlGeneratorService.generateChapter3();
+//        htmlGeneratorService.generateChapter4();
         return HTML_GENERATORS;
     }
 

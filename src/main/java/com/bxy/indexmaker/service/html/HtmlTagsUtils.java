@@ -28,6 +28,7 @@ public class HtmlTagsUtils {
     public static final String HEADER_STYLE = "$header-style";
     public static final String BODY_INDEX = "$body-index";
     public static final String BODY_HEADER_LINKS = "$body-header-links";
+    public static final String BODY_TOP_PAGE_TITLE = "$body-top-page-title";
     public static final String BODY_CONTENT = "$body-content";
 
     public static String openingDivClassRowAlignCenter() {
@@ -116,6 +117,10 @@ public class HtmlTagsUtils {
     }
 
     public static String h3Opening() {
+        return "<h3 style=\"color:green;\">\n";
+    }
+
+    public static String h3OpeningInGreen() {
         return "<h3>\n";
     }
 
@@ -164,7 +169,7 @@ public class HtmlTagsUtils {
     }
 
     public static String openingAHrefDivWithReference(String reference) {
-        return "<a href=\"#"+ reference + "\" >\n";
+        return "<a href=\"#" + reference + "\" >\n";
     }
 
     public static String closingListItem() {
@@ -187,6 +192,13 @@ public class HtmlTagsUtils {
         return "</ul>\n";
     }
 
+    public static String openingOrderedList() {
+        return "<ol>\n";
+    }
+
+    public static String closingOrderedList() {
+        return "</ol>\n";
+    }
 
 
     public static String chapterOpeningDiv() {
@@ -225,6 +237,10 @@ public class HtmlTagsUtils {
         return "<h1>\n";
     }
 
+    public static String h1OpeningInGreen() {
+        return "<h1 style=\"color:green;\">\n";
+    }
+
     public static String h1Closing() {
         return "</h1>\n";
     }
@@ -233,7 +249,7 @@ public class HtmlTagsUtils {
         return "<h2>\n";
     }
 
-    public static String subChapterOpeningDiv() {
+    public static String sectionOpeningDiv() {
         return new StringBuilder()
 //                .append(openingDivClassContainer())
 //                .append(openingDivClassEntryContent())
@@ -268,5 +284,9 @@ public class HtmlTagsUtils {
 
     public static String horizontalLine() {
         return "<hr>\n";
+    }
+
+    public static String getTopPageTitle() {
+        return "\n<br/><p style=\"color: green; text-align: center; font-size: xx-large; \">Le programme 2018-2024 d’Ecolo-Groen à Uccle</p>\n";
     }
 }

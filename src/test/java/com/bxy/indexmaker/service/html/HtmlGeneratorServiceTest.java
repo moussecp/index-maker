@@ -234,7 +234,7 @@ public class HtmlGeneratorServiceTest {
         String style = HtmlTagsUtils.getChapterStyle();
         String bodyIndex = htmlGeneratorService.getFirstTwentyReferencesFormatted(references);
         String bodyHeaderLinks = getHeaderMenusAsHtml(rowContents);
-        String htmlString = htmlGeneratorService.generateHtmlString(body, title, style, bodyIndex, bodyHeaderLinks);
+        String htmlString = htmlGeneratorService.generateHtmlString(body, title, style, bodyIndex, bodyHeaderLinks, "");
 
         File newHtmlFile = new File(FilePathService.getExportedHtmlTestFilePath() + "test.html");
         Files.deleteIfExists(newHtmlFile.toPath());
@@ -408,6 +408,7 @@ public class HtmlGeneratorServiceTest {
         Set<RowContent> rowContents = new TreeSet<>();
         rowContents.add(RowContentFactory.builder()
                 .setContent(PARAGRAPH_WITH_ACCENTS)
+                .setBold("Margaret Atwood ; Hulu sur YouTube")
                 .setChapter(CHAPTER + indexChapter++)
                 .build());
         return rowContents;

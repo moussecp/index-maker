@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.bxy.indexmaker.service.FilePathService.getExportedHtmlFilePath;
+import static com.bxy.indexmaker.service.html.HtmlContentFormatService.getFormattedContent;
 import static com.bxy.indexmaker.service.html.HtmlHeaderMenuService.getHeaderMenusAsHtml;
 import static com.bxy.indexmaker.service.html.HtmlHeaderStructureService.buildHeadersStructure;
 import static com.bxy.indexmaker.service.html.HtmlTagsUtils.*;
@@ -30,17 +31,18 @@ public class HtmlGeneratorService {
     private ReferenceRepository referenceRepository = new ReferenceMapDao();
     private RowContentService rowContentService = new RowContentService();
 
-    protected void generateHtmlFile(String body, String title, String style, String bodyIndex, String outputFilePath, String bodyHeaderLinks) throws IOException {
-        String htmlString = generateHtmlString(body, title, style, bodyIndex, bodyHeaderLinks);
+    protected void generateHtmlFile(String body, String pageTitle, String style, String bodyIndex, String outputFilePath, String bodyHeaderLinks, String topPageTitle) throws IOException {
+        String htmlString = generateHtmlString(body, pageTitle, style, bodyIndex, bodyHeaderLinks, topPageTitle);
         File newHtmlFile = new File(outputFilePath);
         Files.deleteIfExists(newHtmlFile.toPath());
         FileUtils.write(newHtmlFile, htmlString, StandardCharsets.UTF_8);
     }
 
-    protected String generateHtmlString(String body, String title, String style, String bodyIndex, String bodyHeaderLinks) throws IOException {
+    protected String generateHtmlString(String body, String title, String style, String bodyIndex, String bodyHeaderLinks, String topPagetitle) throws IOException {
         String htmlString = FileUtils.readFileToString(htmlTemplateFile, StandardCharsets.UTF_8);
         htmlString = htmlString.replace(HEADER_TITLE, title);
         htmlString = htmlString.replace(HEADER_STYLE, style);
+        htmlString = htmlString.replace(BODY_TOP_PAGE_TITLE, topPagetitle);
         htmlString = htmlString.replace(BODY_HEADER_LINKS, bodyHeaderLinks);
         htmlString = htmlString.replace(BODY_INDEX, bodyIndex);
         htmlString = htmlString.replace(BODY_CONTENT, body);
@@ -55,8 +57,7 @@ public class HtmlGeneratorService {
             String headers = headersStructure.get(index);
             sb.append(headers != null ? headers : EMPTY);
             if (!rowContent.hasContentDuplicatingAHeaderTitle()) {
-                String content = rowContent.getContent();
-                sb.append(content);
+                sb.append(getFormattedContent(rowContent));
             }
             index++;
         }
@@ -76,9 +77,9 @@ public class HtmlGeneratorService {
         String style = HtmlTagsUtils.getChapterStyle();
         String bodyIndex = "";// getFirstTwentyReferencesFormatted(references);
         String body = buildBodyContentWihStructure(rowContents, buildHeadersStructure(rowContents));
-        String title = "Tout le programme";
+        String pageTitle = "Tout le programme";
         String outputFilePath = getExportedHtmlFilePath() + "TOUT.html";
-        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getHeaderMenusAsHtml(rowContents));
+        generateHtmlFile(body, pageTitle, "", bodyIndex, outputFilePath, getHeaderMenusAsHtml(rowContents), HtmlTagsUtils.getTopPageTitle());
         System.out.println("html generated: " + "TOUT.html");
     }
 
@@ -92,7 +93,7 @@ public class HtmlGeneratorService {
         String body = buildBodyContentWihStructure(rowContents, buildHeadersStructure(rowContents));
         String title = chapterName;
         String outputFilePath = getExportedHtmlFilePath() + fileName;
-        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getHeaderMenusAsHtml(rowContents));
+        generateHtmlFile(body, title, "", bodyIndex, outputFilePath, getHeaderMenusAsHtml(rowContents), "");
         System.out.println("html generated: " + fileName);
     }
 

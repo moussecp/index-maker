@@ -4,6 +4,7 @@ import com.bxy.indexmaker.service.html.HtmlTagsUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +36,8 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
     private String notes;
     @Column
     private ListType listType;
+    @ElementCollection
+    private List<String> boldText = new ArrayList<>();
     private static Long idIndex = 0L;
 
     public RowContent() {
@@ -50,7 +53,8 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
             String subSection,
             String subSubSection,
             String notes,
-            ListType listType) {
+            ListType listType,
+            List<String> boldText) {
         this.id = ++idIndex;
         this.content = setValueOrEmpty(content);
         this.chapter = setValueOrEmpty(chapter);
@@ -60,6 +64,19 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
         this.subSubSection = setValueOrEmpty(subSubSection);
         this.notes = setValueOrEmpty(notes);
         this.listType = listType;
+        this.boldText = boldText;
+    }
+
+    public void setListType(ListType listType) {
+        this.listType = listType;
+    }
+
+    public List<String> getBoldText() {
+        return boldText;
+    }
+
+    public void setBoldText(List<String> boldText) {
+        this.boldText = boldText;
     }
 
     @Override

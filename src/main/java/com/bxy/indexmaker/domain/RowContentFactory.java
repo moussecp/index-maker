@@ -2,6 +2,11 @@ package com.bxy.indexmaker.domain;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.bxy.indexmaker.domain.ListType.*;
 
 @Service
@@ -21,6 +26,7 @@ public class RowContentFactory {
         private String subSubSection = N_A;
         private String notes = N_A;
         private ListType listType = ListType.NONE;
+        private List<String> boldText = new ArrayList<>();
 
         private Builder() {
         }
@@ -61,7 +67,7 @@ public class RowContentFactory {
         }
 
         public RowContent build() {
-            return new RowContent(content, chapter, subChapter, section, subSection, subSubSection, notes, listType);
+            return new RowContent(content, chapter, subChapter, section, subSection, subSubSection, notes, listType, boldText);
         }
 
         public Builder setList(String list) {
@@ -76,6 +82,12 @@ public class RowContentFactory {
                     this.listType = NONE;
                     break;
             }
+            return this;
+        }
+
+        public Builder setBold(String bold) {
+            List<String> collect = Arrays.asList(bold.split(";")).stream().map(s -> s.trim()).collect(Collectors.toList());
+            this.boldText = collect != null ? collect : new ArrayList<>();
             return this;
         }
     }
