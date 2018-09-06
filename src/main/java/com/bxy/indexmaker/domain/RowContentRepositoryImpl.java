@@ -3,6 +3,7 @@ package com.bxy.indexmaker.domain;
 import com.bxy.indexmaker.configuration.persistence.AbstractJpaDao;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -19,7 +20,7 @@ public class RowContentRepositoryImpl extends AbstractJpaDao<Long, RowContent> i
     }
 
     @Override
-    public void addAll(List<RowContent> rowContents) {
+    public void addAll(Collection<RowContent> rowContents) {
         for (RowContent rowContent : rowContents) {
             addRowContent(rowContent);
         }

@@ -3,6 +3,7 @@ package com.bxy.indexmaker.domain;
 import com.bxy.indexmaker.configuration.persistence.AbstractMapDao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class RowContentMapDao extends AbstractMapDao<RowContent> implements RowContentRepository {
@@ -18,7 +19,7 @@ public class RowContentMapDao extends AbstractMapDao<RowContent> implements RowC
     }
 
     @Override
-    public void addAll(List<RowContent> rowContents) {
+    public void addAll(Collection<RowContent> rowContents) {
         for(RowContent rowContent : rowContents) {
             addRowContent(rowContent);
         }

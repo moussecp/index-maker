@@ -79,8 +79,16 @@ public class HtmlTagsUtils {
         return "<div class=\"container\">\n";
     }
 
+    public static String openingDivClassContainerWithId(String id) {
+        return "<div class=\"container\" id=\"" + id + "\" >\n";
+    }
+
     public static String openingDivClassBlogHeader() {
         return "<div class=\"blog-header\" >\n";
+    }
+
+    public static String openingDivClassBlogHeaderWithId(String id) {
+        return "<div class=\"blog-header\" id=\" " + id + "\" >\n";
     }
 
     public static String openingDivClassContainerFluid() {
@@ -159,9 +167,24 @@ public class HtmlTagsUtils {
         return "</a>\n";
     }
 
+    public static String openingUnorderedListSubMenus() {
+        return "<ul class=\"sub-menu\">\n";
+    }
+
+    public static String closingUnorderedList() {
+        return "</ul>\n";
+    }
+
     public static String chapterOpeningDiv() {
         return new StringBuilder()
                 .append(openingDivClassBlogHeader())
+                .append(openingDivClassContainer())
+                .toString();
+    }
+
+    public static String chapterOpeningDivWithId(String id) {
+        return new StringBuilder()
+                .append(openingDivClassBlogHeaderWithId(id))
                 .append(openingDivClassContainer())
                 .toString();
     }
@@ -192,6 +215,15 @@ public class HtmlTagsUtils {
     public static String subChapterOpeningDiv() {
         return new StringBuilder()
                 .append(openingDivClassContainer())
+                .append(openingDivClassRow())
+                .append(openingDivClassColSm8BlogMain())
+                .append(openingDivClassBlogPost())
+                .toString();
+    }
+
+    public static String subChapterOpeningDivWithId(String id) {
+        return new StringBuilder()
+                .append(openingDivClassContainerWithId(id))
                 .append(openingDivClassRow())
                 .append(openingDivClassColSm8BlogMain())
                 .append(openingDivClassBlogPost())

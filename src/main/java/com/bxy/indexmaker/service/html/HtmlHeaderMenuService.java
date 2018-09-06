@@ -2,7 +2,10 @@ package com.bxy.indexmaker.service.html;
 
 import com.bxy.indexmaker.domain.RowContent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static com.bxy.indexmaker.service.html.HtmlTagsUtils.*;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -13,61 +16,102 @@ public class HtmlHeaderMenuService {
         Set<HeaderMenu> headerMenus = getHeaderMenus(rowContents);
         StringBuilder sb = new StringBuilder();
         for (HeaderMenu headerMenu : headerMenus) {
-
-            //TODO for each header, add chapter tag && add following subheader tags
             sb.append(openingListMenuItem())
-                    .append(openingAHrefDivWithReference("test"))
-                    .append(headerMenu)
-                    .append(closingAHref())
-                    .append(closingList());
+                    .append(openingAHrefDivWithReference(headerMenu.getTagId()))
+                    .append(headerMenu.getMenuTitle())
+                    .append(closingAHref());
+            if (headerMenu.hasSubMenus()) {
+                sb.append(openingUnorderedListSubMenus());
+                for (HeaderMenu subMenu : headerMenu.getSubMenus()) {
+                    sb.append(openingListMenuItem())
+                            .append(openingAHrefDivWithReference(subMenu.getTagId()))
+                            .append(subMenu.getMenuTitle())
+                            .append(closingAHref())
+                            .append(closingList());
+                }
+                sb.append(closingUnorderedList());
+            }
+            sb.append(closingList());
         }
         return sb.toString();
     }
 
     public static Set<HeaderMenu> getHeaderMenus(List<RowContent> rowContents) {
         List<RowContent> rowContentsCopy = new ArrayList<>(rowContents);
-        Set<HeaderMenu> headerMenus = new HashSet<>();
-        Collections.sort(rowContentsCopy);
+        Set<HeaderMenu> headerMenus = new TreeSet<>();
+        String previousChapter = EMPTY;
         String previousMenuTitle = EMPTY;
         String previousSubMenuTitle = EMPTY;
         HeaderMenu headerMenu = null;
-        for(RowContent rowContent : rowContentsCopy) {
-            String currentMenuTitle = rowContent.getChapter();
-            if(!previousMenuTitle.equals(currentMenuTitle) && !HtmlTagsUtils.N_A.equals(currentMenuTitle)) {
-                if(headerMenu != null) {
+        for (RowContent rowContent : rowContentsCopy) {
+            String chapter = rowContent.getChapter();
+            if(headerMenu != null && !previousChapter.equals(chapter)) {
+                headerMenus.add(headerMenu);
+                headerMenu = null;
+            }
+            String subChapter = rowContent.getSubChapter();
+            String currentMenuTitle = rowContent.getChapterPlusSubChapter();
+            String currentSubMenuTitle = rowContent.getChapterPlusSubChapterPlusSection();
+            if (!previousMenuTitle.equals(currentMenuTitle) && !HtmlTagsUtils.N_A.equals(subChapter)) {
+                if (headerMenu != null) {
                     headerMenus.add(headerMenu);
                 }
-                headerMenu = new HeaderMenu(currentMenuTitle);
+                headerMenu = new HeaderMenu(currentMenuTitle, subChapter, rowContent.getFullHeadersId());
             }
+            String section = rowContent.getSection();
+            if (headerMenu!= null && !previousSubMenuTitle.equals(currentSubMenuTitle) && !HtmlTagsUtils.N_A.equals(section)) {
+                headerMenu.getSubMenus().add(new HeaderMenu(currentMenuTitle, section, rowContent.getFullHeadersId()));
+            }
+            previousMenuTitle = currentMenuTitle;
+            previousSubMenuTitle = currentSubMenuTitle;
+            previousChapter = chapter;
         }
-        if(headerMenu != null) {
+        if (headerMenu != null) {
             headerMenus.add(headerMenu);
         }
         return headerMenus;
     }
 
-    private static class HeaderMenu {
+    private static class HeaderMenu implements Comparable {
+        private String mainTitle;
         private String menuTitle;
-        private List<String> subMenus = new ArrayList<>();
+        private String tagId;
+        private Set<HeaderMenu> subMenus = new TreeSet<>();
 
-        public HeaderMenu(String menuTitle) {
+        public HeaderMenu(String mainTitle, String menuTitle, String tagId) {
+            this.mainTitle = mainTitle;
             this.menuTitle = menuTitle;
+            this.tagId = tagId;
+        }
+
+        public String getTagId() {
+            return tagId;
         }
 
         public String getMenuTitle() {
             return menuTitle;
         }
 
-        public void setMenuTitle(String menuTitle) {
-            this.menuTitle = menuTitle;
-        }
-
-        public List<String> getSubMenus() {
+        public Set<HeaderMenu> getSubMenus() {
             return subMenus;
         }
 
-        public void setSubMenus(List<String> subMenus) {
-            this.subMenus = subMenus;
+        public boolean hasSubMenus() {
+            return !subMenus.isEmpty();
+        }
+
+        @Override
+        public String toString() {
+            return "HeaderMenu{" +
+                    "mainTitle='" + mainTitle + '\'' +
+                    ", menuTitle='" + menuTitle + '\'' +
+                    ", subMenus=" + subMenus +
+                    '}';
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return this.toString().compareTo(o.toString());
         }
     }
 }

@@ -1,12 +1,15 @@
 package com.bxy.indexmaker.domain;
 
-import org.apache.commons.lang3.StringUtils;
+import com.bxy.indexmaker.service.html.HtmlTagsUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Entity
 @Table(name = "ROW_CONTENT")
@@ -30,11 +33,14 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
     private String subSubSection;
     @Column
     private String notes;
+    private static Long idIndex = 0L;
 
     public RowContent() {
     }
+    private static int headerIndex = 0;
 
     public RowContent(String content, String chapter, String subChapter, String section, String subSection, String subSubSection, String notes) {
+        this.id = ++idIndex;
         this.content = setValueOrEmpty(content);
         this.chapter = setValueOrEmpty(chapter);
         this.subChapter = setValueOrEmpty(subChapter);
@@ -42,10 +48,6 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
         this.subSection = setValueOrEmpty(subSection);
         this.subSubSection = setValueOrEmpty(subSubSection);
         this.notes = setValueOrEmpty(notes);
-    }
-
-    private String setValueOrEmpty(String value) {
-        return value != null ? value : StringUtils.EMPTY;
     }
 
     @Override
@@ -121,8 +123,36 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
         return Arrays.asList(content, chapter, subChapter, section, subSection, subSubSection, notes);
     }
 
-    public String getHeaders() {
-        return Arrays.asList(chapter, subChapter, section, subSection, subSubSection).stream().reduce("; ", String::concat);
+    private String setValueOrEmpty(String value) {
+        return value != null ? value : EMPTY;
+    }
+
+    public List<String> getFullHeadersConverted() {
+        return Arrays.asList(
+                getValidOrEmpty(chapter),
+                getValidOrEmpty(subChapter),
+                getValidOrEmpty(section),
+                getValidOrEmpty(subSection),
+                getValidOrEmpty(subSubSection))
+                ;
+    }
+
+    private String getValidOrEmpty(String value) {
+        return isValid(value) ? value : EMPTY;
+    }
+
+    private boolean isValid(String value) {
+        return value != null && !value.isEmpty() && !HtmlTagsUtils.N_A.equals(value);
+    }
+
+    public String getFullHeadersId() {
+        return getFullHeadersConverted()
+                .stream()
+                .collect (Collectors.joining ("-"))
+                .toLowerCase()
+                .replace(" ", "-")
+//                .concat(String.format("-%03d", ++headerIndex))
+                ;
     }
 
     @Override
@@ -162,5 +192,14 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
     @Override
     public int compareTo(RowContent rowContent) {
         return this.getId().compareTo(rowContent.getId());
+    }
+
+    public String getChapterPlusSubChapter() {
+        return chapter + subChapter;
+    }
+
+
+    public String getChapterPlusSubChapterPlusSection() {
+        return chapter + subChapter + section;
     }
 }

@@ -29,6 +29,7 @@ public class HtmlHeaderStructureService {
 
             //build closing tabs
             //chapter
+            String fullHeader = rowContent.getFullHeadersId();
             String chapter = rowContent.getChapter();
             if (!previousChapter.equals(chapter) && !N_A.equals(chapter)) {
                 if (!previousChapter.equals(N_A)) {
@@ -77,12 +78,12 @@ public class HtmlHeaderStructureService {
             previousChapter = chapter;
             //subChapter
             if ((!previousSubChapter.equals(subChapter) || isNewChapter) && !N_A.equals(subChapter)) {
-                sb.append(buildSubChapterHeader(subChapter));
+                sb.append(buildSubChapterHeader(subChapter, fullHeader));
             }
             previousSubChapter = subChapter;
             //section
             if ((!previousSection.equals(section) || isNewSubChapter) && !N_A.equals(section)) {
-                sb.append(buildSectionHeader(section));
+                sb.append(buildSectionHeader(section, fullHeader));
             }
             previousSection = section;
             //subSection
@@ -133,9 +134,9 @@ public class HtmlHeaderStructureService {
                 .toString();
     }
 
-    private static String buildSubChapterHeader(String subChapter) {
+    private static String buildSubChapterHeader(String subChapter, String fullHeader) {
         return new StringBuilder()
-                .append(chapterOpeningDiv())
+                .append(chapterOpeningDivWithId(fullHeader))
                 .append(h1Opening())
                 .append(emptyIfNull(subChapter))
                 .append(h1Closing())
@@ -149,9 +150,9 @@ public class HtmlHeaderStructureService {
                 .toString();
     }
 
-    private static String buildSectionHeader(String section) {
+    private static String buildSectionHeader(String section, String fullHeader) {
         return new StringBuilder()
-                .append(subChapterOpeningDiv())
+                .append(subChapterOpeningDivWithId(fullHeader))
                 .append(h2Opening())
                 .append(emptyIfNull(section))
                 .append(h2Closing())
