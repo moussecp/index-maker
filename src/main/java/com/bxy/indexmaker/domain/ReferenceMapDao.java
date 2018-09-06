@@ -48,7 +48,7 @@ public class ReferenceMapDao extends AbstractMapDao<Reference> implements Refere
 
     @Override
     public List<Reference> findTopReferencesMinusBlackListed() {
-        System.out.println("results: " + references);
+//        System.out.println("results: " + references);
         System.out.println(BlackListedWords.getList());
         return references.stream()
                 .filter(reference -> !BlackListedWords.getUpperCasedList().contains(reference.getWord().toUpperCase()))
