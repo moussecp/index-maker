@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -17,7 +16,6 @@ import java.io.IOException;
 public class ExcelImporter {
 
     public static final String XLS_FILE_NAME = "programme-ecolo.xls";
-    @Autowired
     private RowContentService rowContentService;
     //TODO use properties file
     private XlsFileAddress xlsFileAddress = XlsFileAddress.builder()
@@ -26,7 +24,8 @@ public class ExcelImporter {
             .build();
 
 
-    public ExcelImporter() {
+    public ExcelImporter(RowContentService rowContentService) {
+        this.rowContentService = rowContentService;
     }
 
     public void importExcelFile() throws IOException, InvalidFormatException {
@@ -52,5 +51,18 @@ public class ExcelImporter {
 
     public void setXlsFileAddress(XlsFileAddress xlsFileAddress) {
         this.xlsFileAddress = xlsFileAddress;
+    }
+
+    public void loadExcelFileContentIfEmpty() throws IOException, InvalidFormatException {
+        if (rowContentService.getRowContentRepository().findAll().isEmpty()) {
+            importExcelFile();
+            System.out.println("Excel file loaded");
+        } else {
+            System.out.println("Excel file already loaded");
+        }
+    }
+
+    public void loadExcelFileContent() throws IOException, InvalidFormatException {
+        importExcelFile();
     }
 }

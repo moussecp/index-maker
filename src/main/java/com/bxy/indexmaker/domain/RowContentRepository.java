@@ -9,4 +9,8 @@ public interface RowContentRepository extends Dao<Long, RowContent> {
     void addAll(Collection<RowContent> rowContents);
     List<RowContent> findAllRowContents();
     RowContent findRowContent(Long id);
+
+    void updateRowContent(RowContent rowContent);
+
+    RowContent findLastRowContent();
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class RowContentRepositoryImpl extends AbstractJpaDao<Long, RowContent> implements RowContentRepository {
@@ -27,11 +28,20 @@ public class RowContentRepositoryImpl extends AbstractJpaDao<Long, RowContent> i
     }
 
     @Override
+    public List<RowContent> findAll() {
+        return findAllRowContents();
+    }
+
+    @Override
     public List<RowContent> findAllRowContents() {
         return getEntityManager().createQuery("select r from RowContent r", RowContent.class)
                 .getResultList();
     }
 
+    @Override
+    public Optional<RowContent> find(Long id) {
+        throw new RuntimeException("DO NOT USE THIS METHOD: find(id)");
+    }
 
     @Override
     public RowContent findRowContent(Long id) {
@@ -39,4 +49,16 @@ public class RowContentRepositoryImpl extends AbstractJpaDao<Long, RowContent> i
                 .setParameter("id", id)
                 .getSingleResult();
     }
+
+    @Override
+    public void updateRowContent(RowContent rowContent) {
+        //TODO
+    }
+
+    @Override
+    public RowContent findLastRowContent() {
+        return null;
+    }
+
+
 }

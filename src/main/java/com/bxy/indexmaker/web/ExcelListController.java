@@ -1,10 +1,14 @@
 package com.bxy.indexmaker.web;
 
 
+import com.bxy.indexmaker.domain.ReferenceMapDao;
+import com.bxy.indexmaker.domain.ReferenceRepository;
+import com.bxy.indexmaker.domain.RowContentMapDao;
+import com.bxy.indexmaker.domain.RowContentRepository;
 import com.bxy.indexmaker.service.RowContentService;
 import com.bxy.indexmaker.service.html.HtmlGeneratorService;
+import com.bxy.indexmaker.service.importer.ExcelImporter;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -25,10 +29,12 @@ public class ExcelListController {
     public static final String GENERATE_CHAPTER2 = "excel/generateChapter2";
     public static final String GENERATE_CHAPTER3 = "excel/generateChapter3";
     public static final String HTML_GENERATORS = "excel/generators";
-    @Autowired
-    private RowContentService rowContentService;
-    @Autowired
-    private HtmlGeneratorService htmlGeneratorService;
+
+    private RowContentRepository rowContentRepository = new RowContentMapDao();
+    private ReferenceRepository referenceRepository = new ReferenceMapDao();
+    private RowContentService rowContentService = new RowContentService(rowContentRepository, referenceRepository);
+    private HtmlGeneratorService htmlGeneratorService = new HtmlGeneratorService(rowContentRepository, referenceRepository);
+    private ExcelImporter excelImporter = new ExcelImporter(rowContentService);
 
     //TODO use ExceptionHandler
 //    @ExceptionHandler(Throwable.class)
@@ -44,7 +50,7 @@ public class ExcelListController {
 
     @RequestMapping("/" + EXCEL_IMPORT)
     String importList() throws IOException, InvalidFormatException {
-        rowContentService.loadExcelFileContent();
+        excelImporter.loadExcelFileContent();
         return "redirect:/" + EXCEL_LIST;
     }
 
@@ -100,7 +106,7 @@ public class ExcelListController {
     }
 
     private void init() throws IOException, InvalidFormatException {
-        rowContentService.loadExcelFileContentIfEmpty();
+        excelImporter.loadExcelFileContentIfEmpty();
         rowContentService.calculateIndexIfEmpty();
     }
 }

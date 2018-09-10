@@ -34,7 +34,7 @@ public class ExcelImporterTest {
 
     @Before
     public void setup() {
-        excelImporter = new ExcelImporter();
+        excelImporter = new ExcelImporter(rowContentService);
         excelImporter.setRowContentService(rowContentService);
         excelImporter.setXlsFileAddress(xlsFileAddress);
     }

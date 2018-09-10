@@ -1,21 +1,21 @@
 package com.bxy.indexmaker.domain;
 
 import com.bxy.indexmaker.configuration.persistence.AbstractMapDao;
+import org.hibernate.exception.ConstraintViolationException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.*;
 
 public class RowContentMapDao extends AbstractMapDao<RowContent> implements RowContentRepository {
 
-    private static List<RowContent> rowContents = new ArrayList<>();
-    private static Long index = 1L;
+    private static Map<Long, RowContent> rowContents = new TreeMap<>();
 
     @Override
     public void addRowContent(RowContent rowContent) {
-        rowContent.setId(index++);
-//        System.out.println("added: " + rowContent);
-        rowContents.add(rowContent);
+        if(rowContents.containsKey(rowContent.getId())) {
+            throw new ConstraintViolationException("A rowContent already exists with this  id", new SQLException(), "ID");
+        }
+        rowContents.put(rowContent.getId(), rowContent);
     }
 
     @Override
@@ -28,17 +28,22 @@ public class RowContentMapDao extends AbstractMapDao<RowContent> implements RowC
     @Override
     public List<RowContent> findAllRowContents() {
 //        System.out.println("results: " + rowContents);
-        return rowContents;
+        return new ArrayList<>(rowContents.values());
     }
 
     @Override
     public RowContent findRowContent(Long id) {
-        RowContent rowContent = rowContents
-                .stream()
-                .filter(rc -> rc.getId().equals(id))
-                .findAny()
-                .get();
-//        System.out.println("found for id: " + id + "results: " + rowContent);
-        return rowContent;
+        return rowContents.get(id);
+    }
+
+    @Override
+    public void updateRowContent(RowContent rowContent) {
+        rowContents.put(rowContent.getId(), rowContent);
+    }
+
+    @Override
+    public RowContent findLastRowContent() {
+        Optional<Long> lastKey = rowContents.keySet().stream().max(Long::compareTo);
+        return rowContents.get(lastKey.get());
     }
 }

@@ -256,4 +256,8 @@ public class RowContent implements Identifiable<Long>, Comparable<RowContent> {
     public boolean isEnumeratedList() {
         return listType.isEnumeratedList();
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }

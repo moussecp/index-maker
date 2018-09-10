@@ -1,7 +1,9 @@
 package com.bxy.indexmaker.service.html;
 
-import com.bxy.indexmaker.domain.*;
-import com.bxy.indexmaker.service.RowContentService;
+import com.bxy.indexmaker.domain.Reference;
+import com.bxy.indexmaker.domain.ReferenceRepository;
+import com.bxy.indexmaker.domain.RowContent;
+import com.bxy.indexmaker.domain.RowContentRepository;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +28,13 @@ public class HtmlGeneratorService {
     private File htmlTemplateFile = new File(TEMPLATE_PATH);
 
     //TODO use real hibernate Repository
-    private RowContentRepository rowContentRepository = new RowContentMapDao();
+    private RowContentRepository rowContentRepository;
     //TODO use real hibernate Repository
-    private ReferenceRepository referenceRepository = new ReferenceMapDao();
-    private RowContentService rowContentService = new RowContentService();
+    private ReferenceRepository referenceRepository;
+    public HtmlGeneratorService(RowContentRepository rowContentRepository, ReferenceRepository referenceRepository) {
+        this.rowContentRepository = rowContentRepository;
+        this.referenceRepository = referenceRepository;
+    }
 
     protected void generateHtmlFile(String body, String pageTitle, String style, String bodyIndex, String outputFilePath, String bodyHeaderLinks, String topPageTitle) throws IOException {
         String htmlString = generateHtmlString(body, pageTitle, style, bodyIndex, bodyHeaderLinks, topPageTitle);
